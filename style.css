@@ -1,0 +1,23 @@
+#board {
+  background-color: black;
+  height: 20px;
+  width: 50px;
+}
+
+#container {
+  display: flex;
+
+  margin-left: 40%;
+}
+
+.rows {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+}
+#Turn {
+  display: flex;
+  justify-content: center;
+  margin-top: 5%;
+  font-size: 20px;
+}
