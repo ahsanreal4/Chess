@@ -112,23 +112,7 @@ function movesforBishop() {
           i > targetVal && r > targetCellnum;
           i--, r--
         ) {
-          if (i === 1) {
-            row = "a";
-          } else if (i === 2) {
-            row = "b";
-          } else if (i === 3) {
-            row = "c";
-          } else if (i === 4) {
-            row = "d";
-          } else if (i === 5) {
-            row = "e";
-          } else if (i === 6) {
-            row = "f";
-          } else if (i === 7) {
-            row = "g";
-          } else if (i === 8) {
-            row = "h";
-          }
+          row = this.row(i);
 
           if (document.getElementById(row + r).hasChildNodes()) {
             return false;
@@ -141,23 +125,7 @@ function movesforBishop() {
           i < targetVal && r > targetCellnum;
           i++, r--
         ) {
-          if (i === 1) {
-            row = "a";
-          } else if (i === 2) {
-            row = "b";
-          } else if (i === 3) {
-            row = "c";
-          } else if (i === 4) {
-            row = "d";
-          } else if (i === 5) {
-            row = "e";
-          } else if (i === 6) {
-            row = "f";
-          } else if (i === 7) {
-            row = "g";
-          } else if (i === 8) {
-            row = "h";
-          }
+          row = this.row(i);
 
           if (document.getElementById(row + r).hasChildNodes()) {
             return false;
@@ -170,23 +138,7 @@ function movesforBishop() {
           i > targetVal && r < targetCellnum;
           i--, r++
         ) {
-          if (i === 1) {
-            row = "a";
-          } else if (i === 2) {
-            row = "b";
-          } else if (i === 3) {
-            row = "c";
-          } else if (i === 4) {
-            row = "d";
-          } else if (i === 5) {
-            row = "e";
-          } else if (i === 6) {
-            row = "f";
-          } else if (i === 7) {
-            row = "g";
-          } else if (i === 8) {
-            row = "h";
-          }
+          row = this.row(i);
 
           if (document.getElementById(row + r).hasChildNodes()) {
             return false;
@@ -199,23 +151,7 @@ function movesforBishop() {
           i < targetVal && r < targetCellnum;
           i++, r++
         ) {
-          if (i === 1) {
-            row = "a";
-          } else if (i === 2) {
-            row = "b";
-          } else if (i === 3) {
-            row = "c";
-          } else if (i === 4) {
-            row = "d";
-          } else if (i === 5) {
-            row = "e";
-          } else if (i === 6) {
-            row = "f";
-          } else if (i === 7) {
-            row = "g";
-          } else if (i === 8) {
-            row = "h";
-          }
+          row = this.row(i);
 
           if (document.getElementById(row + r).hasChildNodes()) {
             return false;
@@ -224,5 +160,26 @@ function movesforBishop() {
         return true;
       }
     }
+  };
+  this.row = function (i) {
+    let row;
+    if (i === 1) {
+      row = "a";
+    } else if (i === 2) {
+      row = "b";
+    } else if (i === 3) {
+      row = "c";
+    } else if (i === 4) {
+      row = "d";
+    } else if (i === 5) {
+      row = "e";
+    } else if (i === 6) {
+      row = "f";
+    } else if (i === 7) {
+      row = "g";
+    } else if (i === 8) {
+      row = "h";
+    }
+    return row;
   };
 }
