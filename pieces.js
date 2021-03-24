@@ -1,6 +1,7 @@
 function Pieces() {
   let pieceClicked = false;
   let turn = "w";
+
   let moves = new Moves();
   let Movesforknights = new movesForKnight();
   let MovesforRook = new movesforRook();
@@ -31,8 +32,8 @@ function Pieces() {
       element.style.backgroundColor = color;
 
       element.style.border = "1px solid black";
-      element.style.height = "50px";
-      element.style.width = "50px";
+      element.style.height = "60px";
+      element.style.width = "60px";
       element.style.marginRight = "2%";
 
       row.style.marginTop = "2%";
@@ -42,7 +43,70 @@ function Pieces() {
           if (pieceClicked === false) {
             pieceClicked = true;
             clickedPiece = e.target;
+            if (
+              clickedPiece.id === "wb1" ||
+              clickedPiece.id === "wb2" ||
+              clickedPiece.id === "bb1" ||
+              clickedPiece.id === "bb2"
+            ) {
+              MovesforBishop.availableMovesforBishop(
+                e.target.parentElement.id,
+                clickedPiece,
+                turn
+              );
+            } else if (clickedPiece.id === "wkg" || clickedPiece.id === "bkg") {
+              MovesforKing.availableMovesforKing(
+                e.target.parentElement.id,
+                clickedPiece,
+                turn
+              );
+            } else if (
+              clickedPiece.id === "wk1" ||
+              clickedPiece.id === "wk2" ||
+              clickedPiece.id === "bk1" ||
+              clickedPiece.id === "bk2"
+            ) {
+              Movesforknights.availableMovesforKnights(
+                e.target.parentElement.id,
+                clickedPiece,
+                turn
+              );
+            } else if (
+              clickedPiece.id === "wr1" ||
+              clickedPiece.id === "wr2" ||
+              clickedPiece.id === "br1" ||
+              clickedPiece.id === "br2"
+            ) {
+              MovesforRook.availableMovesforRook(
+                e.target.parentElement.id,
+                clickedPiece,
+                turn
+              );
+            } else if (clickedPiece.id === "wq" || clickedPiece.id === "bq") {
+              MovesforBishop.availableMovesforBishop(
+                e.target.parentElement.id,
+                clickedPiece,
+                turn
+              );
+              MovesforRook.availableMovesforRook(
+                e.target.parentElement.id,
+                clickedPiece,
+                turn
+              );
+            } else if (clickedPiece.id === "wp" || clickedPiece.id === "bp") {
+              moves.availableMovesforPawn(
+                e.target.parentElement.id,
+                clickedPiece,
+                turn
+              );
+            }
           } else {
+            MovesforBishop.undoAllowedMoves();
+            MovesforKing.undoAllowedMoves();
+            Movesforknights.undoAllowedMoves();
+            MovesforRook.undoAllowedMoves();
+            moves.undoAllowedMoves();
+
             let allowCapture = false;
             let newPiece = e.target;
             if (moves.cantTakeAllyPiece(clickedPiece, newPiece)) {
@@ -155,6 +219,9 @@ function Pieces() {
             pieceClicked = false;
           }
         } else {
+          MovesforBishop.undoAllowedMoves();
+          MovesforRook.undoAllowedMoves();
+
           if (pieceClicked === true) {
             let allowMove = false;
             if (
@@ -289,397 +356,46 @@ function Pieces() {
         row = document.getElementById("h");
       }
     }
-    element = document.getElementById("d8");
-    var x = document.createElement("IMG");
 
-    x.setAttribute("src", "Pieces/white/straight/queen.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wq");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
+    let piece = new Piece("Pieces/white/straight/queen.svg", "d8", "w", "wq");
+    piece = new Piece("Pieces/white/straight/rook.svg", "a8", "w", "wr1");
+    piece = new Piece("Pieces/white/straight/knight.svg", "b8", "w", "wk1");
+    piece = new Piece("Pieces/white/straight/knight.svg", "g8", "w", "wk2");
+    piece = new Piece("Pieces/white/straight/bishop.svg", "c8", "w", "wb1");
+    piece = new Piece("Pieces/white/straight/bishop.svg", "f8", "w", "wb2");
+    piece = new Piece("Pieces/white/straight/king.svg", "e8", "w", "wkg");
+    piece = new Piece("Pieces/white/straight/rook.svg", "h8", "w", "wr2");
 
-    element.appendChild(x);
+    for (let i = 1; i <= 8; i++) {
+      let row;
+      if (i === 1) {
+        row = "a";
+      } else if (i === 2) {
+        row = "b";
+      } else if (i === 3) {
+        row = "c";
+      } else if (i === 4) {
+        row = "d";
+      } else if (i === 5) {
+        row = "e";
+      } else if (i === 6) {
+        row = "f";
+      } else if (i === 7) {
+        row = "g";
+      } else if (i === 8) {
+        row = "h";
+      }
+      piece = new Piece("Pieces/white/straight/pawn.svg", row + 7, "w", "wp");
+      piece = new Piece("Pieces/black/inverse/pawn.svg", row + 2, "b", "bp");
+    }
 
-    element = document.getElementById("a8");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/white/straight/rook.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wr1");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("b8");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/white/straight/knight.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wk1");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("g8");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/white/straight/knight.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wk2");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("c8");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/white/straight/bishop.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wb1");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("f8");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/white/straight/bishop.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wb2");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("e8");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/white/straight/king.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wkg");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("h8");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/white/straight/rook.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wr2");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("a7");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/white/straight/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("b7");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/white/straight/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("c7");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/white/straight/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-    element = document.getElementById("d7");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/white/straight/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("e7");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/white/straight/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("f7");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/white/straight/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("g7");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/white/straight/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("h7");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/white/straight/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "w");
-    x.setAttribute("id", "wp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("a2");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/black/inverse/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("b2");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/black/inverse/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-    element = document.getElementById("c2");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/black/inverse/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-    element = document.getElementById("d2");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/black/inverse/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-    element = document.getElementById("e2");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/black/inverse/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-    element = document.getElementById("f2");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/black/inverse/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-    element = document.getElementById("g2");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/black/inverse/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-    element = document.getElementById("h2");
-    x = document.createElement("IMG");
-    x.setAttribute("src", "Pieces/black/inverse/pawn.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bp");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-    element = document.getElementById("a1");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/black/inverse/rook.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "br1");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("h1");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/black/inverse/rook.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "br2");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("e1");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/black/inverse/king.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bkg");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("b1");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/black/inverse/knight.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bk1");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("g1");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/black/inverse/knight.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bk2");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("c1");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/black/inverse/bishop.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bb1");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("f1");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/black/inverse/bishop.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bb2");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
-
-    element = document.getElementById("d1");
-    x = document.createElement("IMG");
-
-    x.setAttribute("src", "Pieces/black/inverse/queen.svg");
-    x.setAttribute("width", "50");
-    x.setAttribute("height", "50");
-    x.setAttribute("name", "b");
-    x.setAttribute("id", "bq");
-    x.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    element.appendChild(x);
+    piece = new Piece("Pieces/black/inverse/rook.svg", "a1", "b", "br1");
+    piece = new Piece("Pieces/black/inverse/rook.svg", "h1", "b", "br2");
+    piece = new Piece("Pieces/black/inverse/king.svg", "e1", "b", "bkg");
+    piece = new Piece("Pieces/black/inverse/knight.svg", "b1", "b", "bk1");
+    piece = new Piece("Pieces/black/inverse/knight.svg", "g1", "b", "bk2");
+    piece = new Piece("Pieces/black/inverse/bishop.svg", "c1", "b", "bb1");
+    piece = new Piece("Pieces/black/inverse/bishop.svg", "f1", "b", "bb2");
+    piece = new Piece("Pieces/black/inverse/queen.svg", "d1", "b", "bq");
   };
 }
