@@ -227,10 +227,10 @@ class King extends Piece {
         }
       }
     }
-    window.onload = function () {
-      let board = new Board();
-      board.undoAllowedMoves();
-    };
+    // window.onload = function () {
+    //   let board = new Board();
+    //   board.undoAllowedMoves();
+    // };
   }
 
   checkElements(element, element1, color) {
