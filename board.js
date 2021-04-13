@@ -354,12 +354,14 @@ function Board() {
 
         if (pawn.allowedMoves.length !== 0) {
           this.undoAllowedMoves();
+
           pawn.availableMovesforPawn(
             cell.parentElement.id,
             cell.name,
             turn,
             false
           );
+
           pawn.showColoredMoves();
 
           NclickedPiece = e.target;

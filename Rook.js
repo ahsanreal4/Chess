@@ -8,7 +8,7 @@ class Rook extends Piece {
     this.allowedMoves.forEach((element) => {
       document.getElementById(element).style.border = "1px solid black";
     });
-    this.allowedMoves = [];
+    this.allowedMoves.length = 0;
   }
   row(i) {
     let row;

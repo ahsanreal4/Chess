@@ -227,6 +227,10 @@ class King extends Piece {
         }
       }
     }
+    window.onload = function () {
+      let board = new Board();
+      board.undoAllowedMoves();
+    };
   }
 
   checkElements(element, element1, color) {
@@ -235,6 +239,7 @@ class King extends Piece {
       (element instanceof Bishop && element1.Name === "queen") ||
       (element instanceof Bishop && element1.Name === "bishop")
     ) {
+      element.allowedMoves.length = 0;
       attackCellarray2 = element.availableMovesforBishop(
         element1.CellNo,
         color,
@@ -247,6 +252,7 @@ class King extends Piece {
       (element instanceof Rook && element1.Name === "queen") ||
       (element instanceof Rook && element1.Name === "rook")
     ) {
+      element.allowedMoves.length = 0;
       attackCellarray2 = element.availabeMovesforRook(
         element1.CellNo,
         color,
@@ -256,6 +262,7 @@ class King extends Piece {
 
       this.attackedCells.push.apply(this.attackedCells, attackCellarray2);
     } else if (element instanceof Knight && element1.Name === "knight") {
+      element.allowedMoves.length = 0;
       attackCellarray2 = element.availableMovesforKnight(
         element1.CellNo,
         color,
