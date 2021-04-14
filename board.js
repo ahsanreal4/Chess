@@ -1,10 +1,12 @@
 function Board() {
+  let checkSound = document.getElementById("myAudio2");
   let moveSound = document.getElementById("myAudio");
+  let checkmateSound = document.getElementById("myAudio3");
   this.elements = [];
   let pawn, queen, rook, knight, bishop, king;
   this.blackpiecesobjects = [];
   this.whitepiecesobjects = [];
-
+  this.checkmate = false;
   let turn;
   this.whitePieces = [];
   this.blackPieces = [];
@@ -24,41 +26,53 @@ function Board() {
         turn = "b";
       }
       if (turn === "w") {
-        if (whitesecs === 0) {
-          if (whiteminutes >= 2) {
-            whiteminutes--;
+        if (this.checkmate === false) {
+          if (whitesecs === 0) {
+            if (whiteminutes >= 2) {
+              whiteminutes--;
+            } else {
+              whiteminutes--;
+              clearInterval(interval);
+            }
+
+            if (whiteminutes !== 0) {
+              whitesecs = 59;
+            } else {
+              whitesecs = 0;
+              gameOver = true;
+              this.showGameOver();
+            }
+            console.log(gameOver);
           } else {
-            whiteminutes--;
-            clearInterval(interval);
-          }
-          if (whiteminutes !== 0) {
-            whitesecs = 59;
-          } else {
-            whitesecs = 0;
-            gameOver = true;
-            this.showGameOver();
+            whitesecs--;
           }
         } else {
-          whitesecs--;
+          gameOver = true;
+          this.showGameOver();
         }
         whiteCounter.textContent = whiteminutes + ": " + whitesecs;
       } else {
-        if (blacksecs === 0) {
-          if (blackmins >= 2) {
-            blackmins--;
+        if (this.checkmate === false) {
+          if (blacksecs === 0) {
+            if (blackmins >= 2) {
+              blackmins--;
+            } else {
+              blackmins--;
+              clearInterval(interval);
+            }
+            if (blackmins !== 0 && this.checkmate === false) {
+              blacksecs = 59;
+            } else {
+              blacksecs = 0;
+              gameOver = true;
+              this.showGameOver();
+            }
           } else {
-            blackmins--;
-            clearInterval(interval);
-          }
-          if (blackmins !== 0) {
-            blacksecs = 59;
-          } else {
-            blacksecs = 0;
-            gameOver = true;
-            this.showGameOver();
+            blacksecs--;
           }
         } else {
-          blacksecs--;
+          gameOver = true;
+          this.showGameOver();
         }
         blackCounter.textContent = blackmins + ": " + blacksecs;
       }
@@ -468,9 +482,9 @@ function Board() {
           king.checkAttackedCells(
             this.whitePieces,
             this.blackPieces,
-            cell.parentElement.id,
             this.whitepiecesobjects,
-            this.blackpiecesobjects
+            this.blackpiecesobjects,
+            false
           );
           king.showColoredMoves();
 
@@ -531,11 +545,14 @@ function Board() {
         document.getElementById(id1).appendChild(NclickedPiece);
         if (turn === "w") {
           turn = "b";
+          king.kingColor = "b";
           document.getElementById("Turn").textContent = "Black's Turn";
         } else {
           turn = "w";
+          king.kingColor = "w";
           document.getElementById("Turn").textContent = "White's Turn";
         }
+        this.isKinginCheckmate();
         allowCapture = false;
       }
     }
@@ -589,14 +606,58 @@ function Board() {
 
           if (turn === "w") {
             turn = "b";
+            king.kingColor = "b";
             document.getElementById("Turn").textContent = "Black's Turn";
           } else {
             turn = "w";
+            king.kingColor = "w";
             document.getElementById("Turn").textContent = "White's Turn";
           }
+
+          this.isKinginCheckmate();
           allowMove = false;
 
           this.undoAllowedMoves();
+        }
+      }
+    }
+  };
+  this.isKinginCheckmate = function () {
+    let cellNo;
+    if (turn === "w") {
+      cellNo = this.findCellNo("king", "w");
+    } else {
+      cellNo = this.findCellNo("king", "b");
+    }
+
+    king.availableMovesforKing(cellNo, turn, turn);
+    king.checkAttackedCells(
+      this.whitePieces,
+      this.blackPieces,
+      this.whitepiecesobjects,
+      this.blackpiecesobjects,
+      true
+    );
+
+    if (king.allowedMoves.length === 0 && king.kingChecked === true) {
+      //Have to add functionality of checking if there is some move to prevent checkmate.
+      checkmateSound.play();
+      this.checkmate = true;
+    } else if (king.kingChecked === true) {
+      checkSound.play();
+    }
+  };
+  this.findCellNo = function (name, color) {
+    if (color === "w") {
+      for (let i = 0; i < this.whitePieces.length; i++) {
+        if (this.whitePieces[i].Name === name) {
+          return this.whitePieces[i].CellNo;
+        }
+      }
+    } else {
+      for (let i = 0; i < this.blackPieces.length; i++) {
+        if (this.blackPieces[i].Name === name) {
+          return this.blackPieces[i].CellNo;
         }
       }
     }
@@ -618,10 +679,7 @@ function Board() {
 
       if (color === "#fffaf0") {
         color = "#DEB887";
-      }
-
-      //color = "#fffaf0";
-      else {
+      } else {
         color = "#fffaf0";
       }
       element.style.backgroundColor = color;
@@ -633,7 +691,6 @@ function Board() {
       element.setAttribute("piece", "false");
       row.style.marginTop = "2%";
       this.elements.push(element);
-      let currTurn = "w";
 
       row.appendChild(element);
       if (i == 7) {

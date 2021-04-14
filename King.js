@@ -1,5 +1,6 @@
 class King extends Piece {
   kingColor;
+  kingChecked = false;
   allowedMoves = [];
   attackedCells = [];
   constructor(imgUrl, cellNo, name, id, color) {
@@ -151,10 +152,11 @@ class King extends Piece {
   checkAttackedCells(
     whitePieces,
     blackPieces,
-    id,
     whitepiecesobjects,
-    blackpiecesobjects
+    blackpiecesobjects,
+    call
   ) {
+    this.attackedCells = [];
     if (this.kingColor === "w") {
       blackPieces.forEach((element1) => {
         if (element1.Name === "queen") {
@@ -227,10 +229,31 @@ class King extends Piece {
         }
       }
     }
-    // window.onload = function () {
-    //   let board = new Board();
-    //   board.undoAllowedMoves();
-    // };
+    if (call === true) {
+      let id;
+      if (this.kingColor === "w") {
+        whitePieces.forEach((element) => {
+          if (element.Name === "king") {
+            id = element.CellNo;
+          }
+        });
+      } else {
+        blackPieces.forEach((element) => {
+          if (element.Name === "king") {
+            id = element.CellNo;
+          }
+        });
+      }
+      for (let i = 0; i < this.attackedCells.length; i++) {
+        if (this.attackedCells[i] === id) {
+          this.kingChecked = true;
+          return this.kingChecked;
+        } else if (i === this.attackedCells.length - 1) {
+          this.kingChecked = false;
+          return this.kingChecked;
+        }
+      }
+    }
   }
 
   checkElements(element, element1, color) {

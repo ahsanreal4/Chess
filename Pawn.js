@@ -33,7 +33,6 @@ class Pawn extends Piece {
     this.allowedMoves = [];
   }
   availableMovesforPawn(clickedCell, clickedPiece, turn) {
-    //this.allowedMoves.length = 0;
     if (clickedPiece === "w") {
       this.pawnColor = "w";
     } else {
