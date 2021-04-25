@@ -1,48 +1,192 @@
 class Pawn extends Piece {
-  pawnColor;
   allowedMoves = [];
-  constructor(imgUrl, cellNo, name, id, color) {
-    super(imgUrl, cellNo, name, id, color);
-  }
+  MoveFunctions;
 
-  row(i) {
-    let row;
-    if (i === 1) {
-      row = "a";
-    } else if (i === 2) {
-      row = "b";
-    } else if (i === 3) {
-      row = "c";
-    } else if (i === 4) {
-      row = "d";
-    } else if (i === 5) {
-      row = "e";
-    } else if (i === 6) {
-      row = "f";
-    } else if (i === 7) {
-      row = "g";
-    } else if (i === 8) {
-      row = "h";
-    }
-    return row;
+  constructor(imgUrl, cellNo, name, id) {
+    super(imgUrl, cellNo, name, id);
   }
-  undoAllowedMoves() {
-    this.allowedMoves.forEach((element) => {
-      document.getElementById(element).style.border = "1px solid black";
-    });
-    this.allowedMoves = [];
+  getCellNo() {
+    return super.getCellNo();
   }
-  availableMovesforPawn(clickedCell, clickedPiece, turn) {
-    if (clickedPiece === "w") {
-      this.pawnColor = "w";
-    } else {
-      this.pawnColor = "b";
-    }
+  setCellNo(cellNo) {
+    super.setCellNo(cellNo);
+  }
+  getColor() {
+    return super.getColor();
+  }
+  getName() {
+    return super.getName();
+  }
+  getAllowedMoves() {
+    return this.allowedMoves;
+  }
+  availableMovesforPawn(turn) {
+    let color = this.getColor();
+
+    this.MoveFunctions = new moveFunctions();
+    let clickedCell = this.getCellNo();
     let clickVal;
     var clickedCellrow = clickedCell.substring(0, 1);
     var clickedCellnumString = clickedCell.replace(/^\D+/g, "");
     var clickedCellnum = parseInt(clickedCellnumString);
-    if (clickedPiece === turn) {
+    if (color === turn) {
+      clickVal = this.MoveFunctions.column(clickedCellrow);
+      let i = clickedCellnum;
+      let r = clickVal;
+      let row;
+      let object = null;
+      row = this.MoveFunctions.row(r);
+      if (color === "white") {
+        if (i - 1 >= 1) {
+          i--;
+          object = this.MoveFunctions.findObjectonCellNo(row + i);
+          if (object === null) {
+            this.allowedMoves.push(row + i);
+          }
+        }
+        i = clickedCellnum;
+        if (i === 7) {
+          i = i - 1;
+          object = this.MoveFunctions.findObjectonCellNo(row + i);
+          if (object === null) {
+            this.allowedMoves.push(row + i);
+            i = i - 1;
+            object = this.MoveFunctions.findObjectonCellNo(row + i);
+            if (object === null) {
+              this.allowedMoves.push(row + i);
+            }
+          }
+        }
+
+        r = clickVal;
+        i = clickedCellnum;
+        if (r === 8) {
+          i--;
+          row = this.MoveFunctions.row(r - 1);
+          object = this.MoveFunctions.findObjectonCellNo(row + i);
+          if (object !== null) {
+            if (object.getColor() !== color) {
+              this.allowedMoves.push(row + i);
+            }
+          }
+        }
+        i = clickedCellnum;
+        r = clickVal;
+        if (r === 1) {
+          i--;
+          row = this.MoveFunctions.row(r + 1);
+          object = this.MoveFunctions.findObjectonCellNo(row + i);
+          if (object !== null) {
+            if (object.getColor() !== color) {
+              this.allowedMoves.push(row + i);
+            }
+          }
+        }
+        r = clickVal;
+        i = clickedCellnum;
+        if (r >= 2 && r <= 7) {
+          i--;
+          row = this.MoveFunctions.row(r + 1);
+          let row2 = this.MoveFunctions.row(r - 1);
+          object = this.MoveFunctions.findObjectonCellNo(row + i);
+          if (object !== null) {
+            if (object.getColor() !== color) {
+              this.allowedMoves.push(row + i);
+            }
+          }
+
+          object = this.MoveFunctions.findObjectonCellNo(row2 + i);
+          if (object !== null) {
+            if (object.getColor() !== color) {
+              this.allowedMoves.push(row2 + i);
+            }
+          }
+        }
+      } else {
+        if (i + 1 <= 8) {
+          i++;
+          object = this.MoveFunctions.findObjectonCellNo(row + i);
+          if (object === null) {
+            this.allowedMoves.push(row + i);
+          }
+        }
+        i = clickedCellnum;
+        if (i === 2) {
+          i = i + 1;
+          object = this.MoveFunctions.findObjectonCellNo(row + i);
+          if (object === null) {
+            this.allowedMoves.push(row + i);
+            i = i + 1;
+            object = this.MoveFunctions.findObjectonCellNo(row + i);
+            if (object === null) {
+              this.allowedMoves.push(row + i);
+            }
+          }
+        }
+        r = clickVal;
+        i = clickedCellnum;
+        if (r === 8) {
+          i++;
+          row = this.MoveFunctions.row(r - 1);
+          object = this.MoveFunctions.findObjectonCellNo(row + i);
+          if (object !== null) {
+            if (object.getColor() !== color) {
+              this.allowedMoves.push(row + i);
+            }
+          }
+        }
+        i = clickedCellnum;
+        r = clickVal;
+        if (r === 1) {
+          i++;
+          row = this.MoveFunctions.row(r + 1);
+          object = this.MoveFunctions.findObjectonCellNo(row + i);
+          if (object !== null) {
+            if (object.getColor() !== color) {
+              this.allowedMoves.push(row + i);
+            }
+          }
+        }
+        r = clickVal;
+        i = clickedCellnum;
+        if (r >= 2 && r <= 7) {
+          i++;
+          row = this.MoveFunctions.row(r + 1);
+          let row2 = this.MoveFunctions.row(r - 1);
+
+          object = this.MoveFunctions.findObjectonCellNo(row + i);
+
+          if (object !== null) {
+            if (object.getColor() !== color) {
+              this.allowedMoves.push(row + i);
+            }
+          }
+
+          object = this.MoveFunctions.findObjectonCellNo(row2 + i);
+          if (object !== null) {
+            if (object.getColor() !== color) {
+              this.allowedMoves.push(row2 + i);
+            }
+          }
+        }
+      }
+    }
+  }
+  allowedMovesforPawn(targetCell) {
+    if (this.MoveFunctions.allowedMoves(targetCell, this.allowedMoves))
+      return true;
+    return false;
+  }
+  attackingcellsforPawn(turn) {
+    let color = this.getColor();
+
+    this.MoveFunctions = new moveFunctions();
+    let clickedCell = this.getCellNo();
+    let clickVal;
+    var clickedCellrow = clickedCell.substring(0, 1);
+    var clickedCellnumString = clickedCell.replace(/^\D+/g, "");
+    var clickedCellnum = parseInt(clickedCellnumString);
+    if (color === turn) {
       switch (clickedCellrow) {
         case "a":
           clickVal = 1;
@@ -80,132 +224,62 @@ class Pawn extends Piece {
       let i = clickedCellnum;
       let r = clickVal;
       let row;
-      row = this.row(r);
-      if (this.pawnColor === "w") {
-        if (i - 1 >= 1) {
-          i--;
-          if (!document.getElementById(row + i).hasChildNodes()) {
-            this.allowedMoves.push(row + i);
-          }
-        }
-        i = clickedCellnum;
-        if (i === 7) {
-          i = i - 2;
-          if (!document.getElementById(row + i).hasChildNodes()) {
-            this.allowedMoves.push(row + i);
-            i = i + 1;
-
-            this.allowedMoves.push(row + i);
-          }
-        }
+      row = this.MoveFunctions.row(r);
+      if (color === "white") {
         r = clickVal;
         i = clickedCellnum;
         if (r === 8) {
           i--;
-          row = this.row(r - 1);
-          if (document.getElementById(row + i).hasChildNodes()) {
-            this.authorize(row, i);
-          }
+          row = this.MoveFunctions.row(r - 1);
+
+          this.allowedMoves.push(row + i);
         }
         i = clickedCellnum;
         r = clickVal;
         if (r === 1) {
           i--;
-          row = this.row(r + 1);
-          if (document.getElementById(row + i).hasChildNodes()) {
-            this.authorize(row, i);
-          }
+          row = this.MoveFunctions.row(r + 1);
+
+          this.allowedMoves.push(row + i);
         }
         r = clickVal;
         i = clickedCellnum;
         if (r >= 2 && r <= 7) {
           i--;
-          row = this.row(r + 1);
-          let row2 = this.row(r - 1);
-          if (document.getElementById(row + i).hasChildNodes()) {
-            this.authorize(row, i);
-          }
-          if (document.getElementById(row2 + i).hasChildNodes()) {
-            this.authorize(row2, i);
-          }
+          row = this.MoveFunctions.row(r + 1);
+          let row2 = this.MoveFunctions.row(r - 1);
+
+          this.allowedMoves.push(row + i);
+          this.allowedMoves.push(row2 + i);
         }
       } else {
-        if (i + 1 <= 8) {
-          i++;
-          if (!document.getElementById(row + i).hasChildNodes()) {
-            this.allowedMoves.push(row + i);
-          }
-        }
-        i = clickedCellnum;
-        if (i === 2) {
-          i = i + 2;
-          if (!document.getElementById(row + i).hasChildNodes()) {
-            this.allowedMoves.push(row + i);
-            i = i - 1;
-
-            this.allowedMoves.push(row + i);
-          }
-        }
         r = clickVal;
         i = clickedCellnum;
         if (r === 8) {
           i++;
-          row = this.row(r - 1);
-          if (document.getElementById(row + i).hasChildNodes()) {
-            this.authorize(row, i);
-          }
+          row = this.MoveFunctions.row(r - 1);
+
+          this.allowedMoves.push(row + i);
         }
         i = clickedCellnum;
         r = clickVal;
         if (r === 1) {
           i++;
-          row = this.row(r + 1);
-          if (document.getElementById(row + i).hasChildNodes()) {
-            this.authorize(row, i);
-          }
+          row = this.MoveFunctions.row(r + 1);
+
+          this.allowedMoves.push(row + i);
         }
         r = clickVal;
         i = clickedCellnum;
         if (r >= 2 && r <= 7) {
           i++;
-          row = this.row(r + 1);
-          let row2 = this.row(r - 1);
+          row = this.MoveFunctions.row(r + 1);
+          let row2 = this.MoveFunctions.row(r - 1);
 
-          if (document.getElementById(row + i).hasChildNodes()) {
-            this.authorize(row, i);
-          }
-          if (document.getElementById(row2 + i).hasChildNodes()) {
-            this.authorize(row2, i);
-          }
+          this.allowedMoves.push(row + i);
+          this.allowedMoves.push(row2 + i);
         }
       }
     }
-  }
-  allowedMovesforPawn(targetCell) {
-    for (let i = 0; i < this.allowedMoves.length; i++) {
-      if (targetCell === this.allowedMoves[i]) {
-        this.undoAllowedMoves();
-        this.allowedMoves = [];
-        return true;
-      }
-    }
-    return false;
-  }
-  authorize(clickedCellrow, i) {
-    if (document.getElementById(clickedCellrow + i).hasChildNodes()) {
-      if (
-        document.getElementById(clickedCellrow + i).firstChild.name !==
-        this.pawnColor
-      ) {
-        this.allowedMoves.push(clickedCellrow + i);
-      }
-    } else {
-      this.allowedMoves.push(clickedCellrow + i);
-    }
-  }
-  showColoredMoves() {
-    this.allowedMoves.forEach((element) => {
-      document.getElementById(element).style.border = "6px solid red";
-    });
   }
 }

@@ -50,8 +50,42 @@
   position: absolute;
   font-family: "Courier New", Courier, monospace;
   top: 300px;
-  left: 710px;
+  left: 48%;
   display: none;
+}
+
+#promotionDivBlack {
+  display: flex;
+  margin-top: 1%;
+  position: relative;
+  left: 48%;
+  display: none;
+  width: 210px;
+  border: 3px solid black;
+}
+#promotionDivBlack div img {
+  width: 50px;
+  height: 50px;
+  border-right: 3px solid black;
+}
+#promotionDivBlack div:nth-child(4) img {
+  border-right: none;
+}
+#promotionDivWhite {
+  display: flex;
+  position: absolute;
+  top: 4%;
+  left: 55%;
+  display: none;
+  border: 3px solid black;
+}
+#promotionDivWhite div img {
+  width: 50px;
+  height: 50px;
+  border-right: 3px solid black;
+}
+#promotionDivWhite div:nth-child(4) img {
+  border-right: none;
 }
 @media only screen and (max-width: 1350px) {
   #White_Clock {

@@ -1,669 +1,32 @@
-function Board() {
-  let checkSound = document.getElementById("myAudio2");
-  let moveSound = document.getElementById("myAudio");
-  let checkmateSound = document.getElementById("myAudio3");
-  this.elements = [];
-  let pawn, queen, rook, knight, bishop, king;
-  this.blackpiecesobjects = [];
-  this.whitepiecesobjects = [];
-  this.checkmate = false;
-  let turn;
-  this.whitePieces = [];
-  this.blackPieces = [];
-  let gameOver = false;
-  this.startClock = function () {
-    let blackCounter = document.getElementById("White_Clock");
-    let whiteCounter = document.getElementById("Black_Clock");
-    let whiteminutes = 4;
-    let whitesecs = 60;
-    let blackmins = 4;
-    let blacksecs = 60;
+let self;
+class Board {
+  elements;
+  turn;
+  checkmate;
+  whitePieces;
+  blackPieces;
+  gameOver;
+  MoveFunctions;
+  currentClickedPiece;
+  moveSound;
+  beepSound;
 
-    let interval = setInterval(() => {
-      if (document.getElementById("Turn").textContent === "White's Turn") {
-        turn = "w";
-      } else {
-        turn = "b";
-      }
-      if (turn === "w") {
-        if (this.checkmate === false) {
-          if (whitesecs === 0) {
-            if (whiteminutes >= 2) {
-              whiteminutes--;
-            } else {
-              whiteminutes--;
-              clearInterval(interval);
-            }
+  constructor() {
+    this.elements = [];
+    this.turn = "white";
+    this.checkmate = false;
+    this.whitePieces = [];
+    this.blackPieces = [];
+    this.gameOver = false;
+    this.MoveFunctions = new moveFunctions();
+    this.moveSound = $("#myAudio")[0];
+    this.beepSound = $("#myAudio4")[0];
 
-            if (whiteminutes !== 0) {
-              whitesecs = 59;
-            } else {
-              whitesecs = 0;
-              gameOver = true;
-              this.showGameOver();
-            }
-            console.log(gameOver);
-          } else {
-            whitesecs--;
-          }
-        } else {
-          gameOver = true;
-          this.showGameOver();
-        }
-        whiteCounter.textContent = whiteminutes + ": " + whitesecs;
-      } else {
-        if (this.checkmate === false) {
-          if (blacksecs === 0) {
-            if (blackmins >= 2) {
-              blackmins--;
-            } else {
-              blackmins--;
-              clearInterval(interval);
-            }
-            if (blackmins !== 0 && this.checkmate === false) {
-              blacksecs = 59;
-            } else {
-              blacksecs = 0;
-              gameOver = true;
-              this.showGameOver();
-            }
-          } else {
-            blacksecs--;
-          }
-        } else {
-          gameOver = true;
-          this.showGameOver();
-        }
-        blackCounter.textContent = blackmins + ": " + blacksecs;
-      }
-    }, 1000);
-  };
-  this.showGameOver = function () {
-    document.getElementById("over").style.display = "block";
-  };
-  this.addPiecestoArray = function () {
-    this.whitePieces.push({ Name: "queen", CellNo: "d8" });
-    this.whitePieces.push({ Name: "bishop", CellNo: "c8" });
-    this.whitePieces.push({ Name: "bishop", CellNo: "f8" });
-    this.whitePieces.push({ Name: "rook", CellNo: "a8" });
-    this.whitePieces.push({ Name: "rook", CellNo: "h8" });
-    this.whitePieces.push({ Name: "knight", CellNo: "b8" });
-    this.whitePieces.push({ Name: "knight", CellNo: "g8" });
-    this.whitePieces.push({ Name: "king", CellNo: "e8" });
-    this.whitePieces.push({ Name: "pawn", CellNo: "a7" });
-    this.whitePieces.push({ Name: "pawn", CellNo: "b7" });
-    this.whitePieces.push({ Name: "pawn", CellNo: "c7" });
-    this.whitePieces.push({ Name: "pawn", CellNo: "d7" });
-    this.whitePieces.push({ Name: "pawn", CellNo: "e7" });
-    this.whitePieces.push({ Name: "pawn", CellNo: "f7" });
-    this.whitePieces.push({ Name: "pawn", CellNo: "g7" });
-    this.whitePieces.push({ Name: "pawn", CellNo: "h7" });
-
-    //Black Pieces
-    this.blackPieces.push({ Name: "queen", CellNo: "d1" });
-    this.blackPieces.push({ Name: "bishop", CellNo: "f1" });
-    this.blackPieces.push({ Name: "bishop", CellNo: "c1" });
-    this.blackPieces.push({ Name: "knight", CellNo: "b1" });
-    this.blackPieces.push({ Name: "knight", CellNo: "g1" });
-    this.blackPieces.push({ Name: "rook", CellNo: "a1" });
-    this.blackPieces.push({ Name: "rook", CellNo: "h1" });
-    this.blackPieces.push({ Name: "king", CellNo: "e1" });
-    this.blackPieces.push({ Name: "pawn", CellNo: "a2" });
-    this.blackPieces.push({ Name: "pawn", CellNo: "b2" });
-    this.blackPieces.push({ Name: "pawn", CellNo: "c2" });
-    this.blackPieces.push({ Name: "pawn", CellNo: "d2" });
-    this.blackPieces.push({ Name: "pawn", CellNo: "e2" });
-    this.blackPieces.push({ Name: "pawn", CellNo: "f2" });
-    this.blackPieces.push({ Name: "pawn", CellNo: "g2" });
-    this.blackPieces.push({ Name: "pawn", CellNo: "h2" });
-  };
-
-  this.removePiecefromArray = function (newPiece) {
-    if (newPiece.name === "w") {
-      this.whitePieces.forEach((element, index) => {
-        if (element.CellNo === newPiece.parentElement.id) {
-          if (index + 1 === this.whitePieces.length) {
-            this.whitePieces.pop();
-          } else {
-            let temp = this.whitePieces[index];
-            this.whitePieces[index] = this.whitePieces[
-              this.whitePieces.length - 1
-            ];
-            this.whitePieces[this.whitePieces.length - 1] = temp;
-            this.whitePieces.pop();
-          }
-        }
-      });
-    } else {
-      this.blackPieces.forEach((element, index) => {
-        if (element.CellNo === newPiece.parentElement.id) {
-          if (index + 1 === this.blackPieces.length) {
-            this.blackPieces.pop();
-          } else {
-            let temp = this.blackPieces[index];
-            this.blackPieces[index] = this.blackPieces[
-              this.blackPieces.length - 1
-            ];
-            this.blackPieces[this.blackPieces.length - 1] = temp;
-            this.blackPieces.pop();
-          }
-        }
-      });
-    }
-  };
-  this.updatePiecesArray = function (cellNo, prevCell) {
-    if (turn === "w") {
-      this.whitePieces.forEach((element) => {
-        if (element.CellNo === prevCell) {
-          element.CellNo = cellNo;
-          return;
-        }
-      });
-    } else {
-      this.blackPieces.forEach((element) => {
-        if (element.CellNo === prevCell) {
-          element.CellNo = cellNo;
-          return;
-        }
-      });
-    }
-  };
-
-  this.drawPieces = function () {
-    queen = new Queen(
-      "Pieces/white/straight/queen.svg",
-      "d8",
-      "w",
-      "q",
-      "white"
-    );
-
-    this.whitepiecesobjects.push(queen);
-    rook = new Rook("Pieces/white/straight/rook.svg", "a8", "w", "r", "white");
-
-    knight = new Knight(
-      "Pieces/white/straight/knight.svg",
-      "b8",
-      "w",
-      "k",
-      "white"
-    );
-
-    knight = new Knight(
-      "Pieces/white/straight/knight.svg",
-      "g8",
-      "w",
-      "k",
-      "white"
-    );
-    this.whitepiecesobjects.push(knight);
-
-    bishop = new Bishop(
-      "Pieces/white/straight/bishop.svg",
-      "c8",
-      "w",
-      "b",
-      "white"
-    );
-
-    bishop = new Bishop(
-      "Pieces/white/straight/bishop.svg",
-      "f8",
-      "w",
-      "b",
-      "white"
-    );
-    this.whitepiecesobjects.push(bishop);
-
-    king = new King("Pieces/white/straight/king.svg", "e8", "w", "kg", "white");
-    this.whitepiecesobjects.push(king);
-
-    rook = new Rook("Pieces/white/straight/rook.svg", "h8", "w", "r", "white");
-    this.whitepiecesobjects.push(rook);
-
-    for (let i = 1; i <= 8; i++) {
-      let row;
-      if (i === 1) {
-        row = "a";
-      } else if (i === 2) {
-        row = "b";
-      } else if (i === 3) {
-        row = "c";
-      } else if (i === 4) {
-        row = "d";
-      } else if (i === 5) {
-        row = "e";
-      } else if (i === 6) {
-        row = "f";
-      } else if (i === 7) {
-        row = "g";
-      } else if (i === 8) {
-        row = "h";
-      }
-
-      pawn = new Pawn(
-        "Pieces/white/straight/pawn.svg",
-        row + 7,
-        "w",
-        "p",
-        "white"
-      );
-      if (i === 1) {
-        this.whitepiecesobjects.push(pawn);
-      }
-
-      pawn = new Pawn(
-        "Pieces/black/inverse/pawn.svg",
-        row + 2,
-        "b",
-        "p",
-        "black"
-      );
-      if (i === 1) {
-        this.blackpiecesobjects.push(pawn);
-      }
-    }
-    rook = new Rook("Pieces/black/inverse/rook.svg", "a1", "b", "r", "black");
-    this.blackpiecesobjects.push(rook);
-
-    rook = new Rook("Pieces/black/inverse/rook.svg", "h1", "b", "r", "black");
-
-    king = new King("Pieces/black/inverse/king.svg", "e1", "b", "kg", "black");
-    this.blackpiecesobjects.push(king);
-
-    knight = new Knight(
-      "Pieces/black/inverse/knight.svg",
-      "b1",
-      "b",
-      "k",
-      "black"
-    );
-
-    knight = new Knight(
-      "Pieces/black/inverse/knight.svg",
-      "g1",
-      "b",
-      "k",
-      "black"
-    );
-    this.blackpiecesobjects.push(knight);
-
-    bishop = new Bishop(
-      "Pieces/black/inverse/bishop.svg",
-      "c1",
-      "b",
-      "b",
-      "black"
-    );
-
-    bishop = new Bishop(
-      "Pieces/black/inverse/bishop.svg",
-      "f1",
-      "b",
-      "b",
-      "black"
-    );
-    this.blackpiecesobjects.push(bishop);
-
-    queen = new Queen(
-      "Pieces/black/inverse/queen.svg",
-      "d1",
-      "b",
-      "q",
-      "black"
-    );
-    this.blackpiecesobjects.push(queen);
-
-    let clickedPiece, prevPiece;
-    let allowMove = false;
-    for (let i = 0; i < this.elements.length; i++) {
-      this.elements[i].addEventListener("click", function (e) {
-        if (gameOver === false) {
-          let cell = e.target;
-
-          if (cell.nodeName === "IMG" || cell.hasChildNodes()) {
-            if (cell.nodeName === "IMG") {
-              clickedPiece = board.pieceClicked(cell, e);
-              if (clickedPiece !== undefined) {
-                prevPiece = clickedPiece;
-              } else {
-                clickedPiece = prevPiece;
-              }
-            } else {
-              board.pieceClicked(cell.firstChild, e);
-            }
-          } else {
-            if (
-              pawn.allowedMoves.length !== 0 ||
-              bishop.allowedMoves.length !== 0 ||
-              rook.allowedMoves.length !== 0 ||
-              queen.allowedMoves.length !== 0 ||
-              king.allowedMoves.length !== 0 ||
-              knight.allowedMoves.length !== 0
-            ) {
-              board.cellClicked(clickedPiece, allowMove, e);
-            }
-          }
-        }
-      });
-    }
-    document.body.addEventListener("mousedown", function (e) {
-      e.preventDefault();
-    });
-    document.body.addEventListener("mousemove", function (e) {
-      e.preventDefault();
-    });
-  };
-  let NclickedPiece;
-  let allowCapture = false;
-  this.pieceClicked = function (cell, e) {
-    if (cell.name === turn) {
-      if (cell.id === "p") {
-        pawn.availableMovesforPawn(
-          cell.parentElement.id,
-          cell.name,
-          turn,
-          false
-        );
-
-        if (pawn.allowedMoves.length !== 0) {
-          this.undoAllowedMoves();
-
-          pawn.availableMovesforPawn(
-            cell.parentElement.id,
-            cell.name,
-            turn,
-            false
-          );
-
-          pawn.showColoredMoves();
-
-          NclickedPiece = e.target;
-          return NclickedPiece;
-        }
-      } else if (cell.id === "r") {
-        rook.availabeMovesforRook(
-          cell.parentElement.id,
-          cell.name,
-          turn,
-          false
-        );
-        if (rook.allowedMoves.length !== 0) {
-          NclickedPiece = e.target;
-          this.undoAllowedMoves();
-          rook.availabeMovesforRook(
-            cell.parentElement.id,
-            cell.name,
-            turn,
-            false
-          );
-          rook.showColoredMoves();
-          return NclickedPiece;
-        }
-      } else if (cell.id === "b") {
-        bishop.availableMovesforBishop(
-          cell.parentElement.id,
-          cell.name,
-          turn,
-          false
-        );
-        if (bishop.allowedMoves.length !== 0) {
-          NclickedPiece = e.target;
-          this.undoAllowedMoves();
-          bishop.availableMovesforBishop(
-            cell.parentElement.id,
-            cell.name,
-            turn,
-            false
-          );
-          bishop.showColoredMoves();
-          return NclickedPiece;
-        }
-      } else if (cell.id === "q") {
-        bishop.availableMovesforBishop(
-          cell.parentElement.id,
-          cell.name,
-          turn,
-          false
-        );
-        rook.availabeMovesforRook(
-          cell.parentElement.id,
-          cell.name,
-          turn,
-          false
-        );
-        if (
-          bishop.allowedMoves.length !== 0 ||
-          rook.allowedMoves.length !== 0
-        ) {
-          NclickedPiece = e.target;
-          this.undoAllowedMoves();
-          bishop.availableMovesforBishop(
-            cell.parentElement.id,
-            cell.name,
-            turn,
-            false
-          );
-          rook.availabeMovesforRook(
-            cell.parentElement.id,
-            cell.name,
-            turn,
-            false
-          );
-          bishop.showColoredMoves();
-          rook.showColoredMoves();
-          return NclickedPiece;
-        }
-      } else if (cell.id === "k") {
-        knight.availableMovesforKnight(
-          cell.parentElement.id,
-          cell.name,
-          turn,
-          false
-        );
-        if (knight.allowedMoves.length !== 0) {
-          NclickedPiece = e.target;
-          this.undoAllowedMoves();
-          knight.availableMovesforKnight(
-            cell.parentElement.id,
-            cell.name,
-            turn,
-            false
-          );
-          knight.showColoredMoves();
-          return NclickedPiece;
-        }
-      } else if (cell.id === "kg") {
-        king.availableMovesforKing(cell.parentElement.id, cell.name, turn);
-        if (king.allowedMoves.length !== 0) {
-          NclickedPiece = e.target;
-          this.undoAllowedMoves();
-          king.availableMovesforKing(cell.parentElement.id, cell.name, turn);
-          king.checkAttackedCells(
-            this.whitePieces,
-            this.blackPieces,
-            this.whitepiecesobjects,
-            this.blackpiecesobjects,
-            false
-          );
-          king.showColoredMoves();
-
-          return NclickedPiece;
-        }
-      }
-    } else {
-      let newPiece = cell;
-
-      if (NclickedPiece !== undefined) {
-        this.capturePiece(NclickedPiece, newPiece, cell.parentElement.id, e);
-      }
-    }
-  };
-  this.capturePiece = function (NclickedPiece, newPiece, id, e) {
-    if (this.cantTakeAllyPiece(NclickedPiece, newPiece)) {
-      if (NclickedPiece.id === "q") {
-        if (bishop.allowedMovesforBishop(id) || rook.allowedMovesforRook(id)) {
-          this.undoAllowedMoves();
-          allowCapture = true;
-        }
-      } else if (NclickedPiece.id === "r") {
-        if (rook.allowedMovesforRook(id)) {
-          allowCapture = true;
-        }
-      } else if (NclickedPiece.id === "kg") {
-        if (king.allowedMovesforKing(id)) {
-          allowCapture = true;
-        }
-      } else if (NclickedPiece.id === "k") {
-        if (knight.allowedMovesforKnight(id)) {
-          allowCapture = true;
-        }
-      } else if (NclickedPiece.id === "b") {
-        if (bishop.allowedMovesforBishop(id)) {
-          allowCapture = true;
-        }
-      } else if (NclickedPiece.id === "p") {
-        if (pawn.allowedMovesforPawn(id)) {
-          allowCapture = true;
-        }
-      }
-
-      if (allowCapture === true) {
-        let id1 = id;
-
-        if (e.target.hasChildNodes()) {
-          moveSound.play();
-          this.removePiecefromArray(newPiece);
-          e.target.removeChild(newPiece);
-        } else {
-          moveSound.play();
-          this.removePiecefromArray(newPiece);
-          e.target.parentElement.removeChild(newPiece);
-        }
-        this.updatePiecesArray(id1, NclickedPiece.parentElement.id);
-
-        document.getElementById(id1).appendChild(NclickedPiece);
-        if (turn === "w") {
-          turn = "b";
-          king.kingColor = "b";
-          document.getElementById("Turn").textContent = "Black's Turn";
-        } else {
-          turn = "w";
-          king.kingColor = "w";
-          document.getElementById("Turn").textContent = "White's Turn";
-        }
-        this.isKinginCheckmate();
-        allowCapture = false;
-      }
-    }
-  };
-  this.undoAllowedMoves = function () {
-    pawn.undoAllowedMoves();
-    rook.undoAllowedMoves();
-    bishop.undoAllowedMoves();
-    knight.undoAllowedMoves();
-    king.undoAllowedMoves();
-  };
-
-  this.cellClicked = function (clickedPiece, allowMove, e) {
-    if (clickedPiece !== undefined) {
-      if (clickedPiece.id === "p") {
-        if (pawn.allowedMovesforPawn(e.target.id)) {
-          allowMove = true;
-        }
-      } else if (clickedPiece.id === "r") {
-        if (rook.allowedMovesforRook(e.target.id)) {
-          allowMove = true;
-        }
-      } else if (clickedPiece.id === "b") {
-        if (bishop.allowedMovesforBishop(e.target.id)) {
-          allowMove = true;
-        }
-      } else if (clickedPiece.id === "q") {
-        if (
-          bishop.allowedMovesforBishop(e.target.id) ||
-          rook.allowedMovesforRook(e.target.id)
-        ) {
-          allowMove = true;
-        }
-      } else if (clickedPiece.id === "k") {
-        if (knight.allowedMovesforKnight(e.target.id)) {
-          allowMove = true;
-        }
-      } else if (clickedPiece.id === "kg") {
-        if (king.allowedMovesforKing(e.target.id)) {
-          allowMove = true;
-        }
-      }
-      if (allowMove === true) {
-        let square = document.getElementById(e.target.id);
-        if (clickedPiece.name === turn) {
-          moveSound.play();
-          let cellNo = clickedPiece.parentElement.id;
-          square.appendChild(clickedPiece);
-
-          this.updatePiecesArray(e.target.id, cellNo);
-
-          if (turn === "w") {
-            turn = "b";
-            king.kingColor = "b";
-            document.getElementById("Turn").textContent = "Black's Turn";
-          } else {
-            turn = "w";
-            king.kingColor = "w";
-            document.getElementById("Turn").textContent = "White's Turn";
-          }
-
-          this.isKinginCheckmate();
-          allowMove = false;
-
-          this.undoAllowedMoves();
-        }
-      }
-    }
-  };
-  this.isKinginCheckmate = function () {
-    let cellNo;
-    if (turn === "w") {
-      cellNo = this.findCellNo("king", "w");
-    } else {
-      cellNo = this.findCellNo("king", "b");
-    }
-
-    king.availableMovesforKing(cellNo, turn, turn);
-    king.checkAttackedCells(
-      this.whitePieces,
-      this.blackPieces,
-      this.whitepiecesobjects,
-      this.blackpiecesobjects,
-      true
-    );
-
-    if (king.allowedMoves.length === 0 && king.kingChecked === true) {
-      //Have to add functionality of checking if there is some move to prevent checkmate.
-      checkmateSound.play();
-      this.checkmate = true;
-    } else if (king.kingChecked === true) {
-      checkSound.play();
-    }
-  };
-  this.findCellNo = function (name, color) {
-    if (color === "w") {
-      for (let i = 0; i < this.whitePieces.length; i++) {
-        if (this.whitePieces[i].Name === name) {
-          return this.whitePieces[i].CellNo;
-        }
-      }
-    } else {
-      for (let i = 0; i < this.blackPieces.length; i++) {
-        if (this.blackPieces[i].Name === name) {
-          return this.blackPieces[i].CellNo;
-        }
-      }
-    }
-  };
-
-  this.drawBoard = function () {
+    this.moveSound.volume = 0.4;
+    this.beepSound.volume = 0.1;
+    self = this;
+  }
+  drawBoard() {
     let row = document.getElementById("a");
     let cellID = 1;
     let color = "#DEB887";
@@ -688,7 +51,6 @@ function Board() {
       element.style.height = "60px";
       element.style.width = "60px";
       element.style.marginRight = "2%";
-      element.setAttribute("piece", "false");
       row.style.marginTop = "2%";
       this.elements.push(element);
 
@@ -716,22 +78,540 @@ function Board() {
         row = document.getElementById("h");
       }
     }
-  };
-  this.cantTakeAllyPiece = function (clickedPiece, newPiece) {
-    if (
-      (clickedPiece.name === "w" && newPiece.name === "b") ||
-      (clickedPiece.name === "b" && newPiece.name === "w")
-    ) {
-      return true;
-    } else {
-      return false;
+  }
+  startClock() {
+    let blackCounter = $("#White_Clock")[0];
+    let whiteCounter = $("#Black_Clock")[0];
+    let whiteminutes = 4;
+    let whitesecs = 60;
+    let blackmins = 4;
+    let blacksecs = 60;
+
+    let interval = setInterval(() => {
+      if ($("#Turn")[0].textContent === "White's Turn") {
+        this.turn = "white";
+      } else {
+        this.turn = "black";
+      }
+      if (this.turn === "white") {
+        if (this.checkmate === false) {
+          if (whitesecs === 0) {
+            if (whiteminutes >= 2) {
+              whiteminutes--;
+            } else {
+              whiteminutes--;
+              clearInterval(interval);
+            }
+
+            if (whiteminutes !== 0) {
+              whitesecs = 59;
+            } else {
+              whitesecs = 0;
+              this.gameOver = true;
+              this.showGameOver();
+            }
+          } else {
+            whitesecs--;
+          }
+        } else {
+          this.gameOver = true;
+          this.showGameOver();
+        }
+        whiteCounter.textContent = whiteminutes + ": " + whitesecs;
+      } else {
+        if (this.checkmate === false) {
+          if (blacksecs === 0) {
+            if (blackmins >= 2) {
+              blackmins--;
+            } else {
+              blackmins--;
+              clearInterval(interval);
+            }
+            if (blackmins !== 0 && this.checkmate === false) {
+              blacksecs = 59;
+            } else {
+              blacksecs = 0;
+              this.gameOver = true;
+              this.showGameOver();
+            }
+          } else {
+            blacksecs--;
+          }
+        } else {
+          this.gameOver = true;
+          this.showGameOver();
+        }
+        blackCounter.textContent = blackmins + ": " + blacksecs;
+      }
+    }, 1000);
+  }
+  showGameOver() {
+    document.getElementById("over").style.display = "block";
+  }
+  drawPieces() {
+    let queen = new Queen(
+      "Pieces/white/straight/queen.svg",
+      "d8",
+      "queen",
+      "white"
+    );
+    this.whitePieces.push(queen);
+    queen = new Rook("Pieces/white/straight/rook.svg", "a8", "rook", "white");
+    this.whitePieces.push(queen);
+    queen = new Rook("Pieces/white/straight/rook.svg", "h8", "rook", "white");
+    this.whitePieces.push(queen);
+    queen = new Knight(
+      "Pieces/white/straight/knight.svg",
+      "b8",
+      "knight",
+      "white"
+    );
+    this.whitePieces.push(queen);
+    queen = new Knight(
+      "Pieces/white/straight/knight.svg",
+      "g8",
+      "knight",
+      "white"
+    );
+    this.whitePieces.push(queen);
+    queen = new Bishop(
+      "Pieces/white/straight/bishop.svg",
+      "c8",
+      "bishop",
+      "white"
+    );
+    this.whitePieces.push(queen);
+    queen = new Bishop(
+      "Pieces/white/straight/bishop.svg",
+      "f8",
+      "bishop",
+      "white"
+    );
+    this.whitePieces.push(queen);
+    queen = new King("Pieces/white/straight/king.svg", "e8", "king", "white");
+    this.whitePieces.push(queen);
+    for (let i = 1; i <= 8; i++) {
+      let row;
+      if (i === 1) {
+        row = "a";
+      } else if (i === 2) {
+        row = "b";
+      } else if (i === 3) {
+        row = "c";
+      } else if (i === 4) {
+        row = "d";
+      } else if (i === 5) {
+        row = "e";
+      } else if (i === 6) {
+        row = "f";
+      } else if (i === 7) {
+        row = "g";
+      } else if (i === 8) {
+        row = "h";
+      }
+      let pawn;
+      pawn = new Pawn(
+        "Pieces/white/straight/pawn.svg",
+        row + 7,
+        "pawn",
+        "white"
+      );
+
+      this.whitePieces.push(pawn);
+
+      pawn = new Pawn(
+        "Pieces/black/inverse/pawn.svg",
+        row + 2,
+        "pawn",
+        "black"
+      );
+
+      this.blackPieces.push(pawn);
     }
-  };
+    queen = new Rook("Pieces/black/inverse/rook.svg", "a1", "rook", "black");
+    this.blackPieces.push(queen);
+    queen = new Rook("Pieces/black/inverse/rook.svg", "h1", "rook", "black");
+    this.blackPieces.push(queen);
+    queen = new King("Pieces/black/inverse/king.svg", "e1", "king", "black");
+    this.blackPieces.push(queen);
+    queen = new Knight(
+      "Pieces/black/inverse/knight.svg",
+      "b1",
+      "knight",
+      "black"
+    );
+    this.blackPieces.push(queen);
+    queen = new Knight(
+      "Pieces/black/inverse/knight.svg",
+      "g1",
+      "knight",
+      "black"
+    );
+    this.blackPieces.push(queen);
+    queen = new Bishop(
+      "Pieces/black/inverse/bishop.svg",
+      "c1",
+      "bishop",
+      "black"
+    );
+    this.blackPieces.push(queen);
+    queen = new Bishop(
+      "Pieces/black/inverse/bishop.svg",
+      "f1",
+      "bishop",
+      "black"
+    );
+    this.blackPieces.push(queen);
+    queen = new Queen("Pieces/black/inverse/queen.svg", "d1", "queen", "black");
+    this.blackPieces.push(queen);
+  }
+  addFunctionality() {
+    this.elements.forEach((element) => {
+      element.addEventListener("click", function (e) {
+        if (self.gameOver === false) {
+          let target = e.target;
+          if (target.nodeName === "IMG" || target.hasChildNodes()) {
+            if (target.nodeName === "IMG") {
+              self.PieceClicked(e.target);
+            } else {
+              self.PieceClicked(e.target.firstChild);
+            }
+          } else {
+            self.cellClicked(e.target);
+          }
+        }
+      });
+    });
+    document.body.addEventListener("mousedown", function (e) {
+      e.preventDefault();
+    });
+    document.body.addEventListener("mousemove", function (e) {
+      e.preventDefault();
+    });
+  }
+  PieceClicked(clickedPiece) {
+    if (clickedPiece.id === self.turn) {
+      const name = clickedPiece.name;
+
+      switch (name) {
+        case "pawn":
+          var object = self.findObject(clickedPiece.parentElement.id);
+
+          if (object !== undefined) {
+            object.availableMovesforPawn(self.turn);
+            const moves = object.getAllowedMoves();
+            if (moves.length !== 0) {
+              self.currentClickedPiece = clickedPiece;
+              self.undoAllowedMoves(self.turn, object.getCellNo());
+              self.MoveFunctions.showColoredMoves(moves);
+            } else {
+              self.beepSound.play();
+            }
+          }
+
+          break;
+
+        case "queen":
+          var object = self.findObject(clickedPiece.parentElement.id);
+
+          if (object !== undefined) {
+            object.availableMovesforQueen(self.turn);
+            const moves = object.getAllowedMoves();
+            if (moves.length !== 0) {
+              self.currentClickedPiece = clickedPiece;
+              self.undoAllowedMoves(self.turn, object.getCellNo());
+              self.MoveFunctions.showColoredMoves(moves);
+            } else {
+              self.beepSound.play();
+            }
+          }
+          break;
+
+        case "king":
+          var object = self.findObject(clickedPiece.parentElement.id);
+
+          if (object !== undefined) {
+            object.availableMovesforKing(self.turn);
+            const moves = object.getAllowedMoves();
+            if (moves.length !== 0) {
+              self.currentClickedPiece = clickedPiece;
+              self.undoAllowedMoves(self.turn, object.getCellNo());
+              self.MoveFunctions.showColoredMoves(moves);
+            } else {
+              self.beepSound.play();
+            }
+          }
+
+          break;
+
+        case "rook":
+          var object = self.findObject(clickedPiece.parentElement.id);
+
+          if (object !== undefined) {
+            object.availableMovesforRook(self.turn);
+            const moves = object.getAllowedMoves();
+            if (moves.length !== 0) {
+              self.currentClickedPiece = clickedPiece;
+              self.undoAllowedMoves(self.turn, object.getCellNo());
+              self.MoveFunctions.showColoredMoves(moves);
+            } else {
+              self.beepSound.play();
+            }
+          }
+          break;
+
+        case "knight":
+          var object = self.findObject(clickedPiece.parentElement.id);
+
+          if (object !== undefined) {
+            object.availableMovesforKnight(self.turn);
+            const moves = object.getAllowedMoves();
+            if (moves.length !== 0) {
+              self.currentClickedPiece = clickedPiece;
+              self.undoAllowedMoves(self.turn, object.getCellNo());
+              self.MoveFunctions.showColoredMoves(moves);
+            } else {
+              self.beepSound.play();
+            }
+          }
+          break;
+
+        case "bishop":
+          var object = self.findObject(clickedPiece.parentElement.id);
+
+          if (object !== undefined) {
+            object.availableMovesforBishop(self.turn);
+            const moves = object.getAllowedMoves();
+            if (moves.length !== 0) {
+              self.currentClickedPiece = clickedPiece;
+              self.undoAllowedMoves(self.turn, object.getCellNo());
+              self.MoveFunctions.showColoredMoves(moves);
+            } else {
+              self.beepSound.play();
+            }
+          }
+          break;
+
+        default:
+          console.log("Error!");
+      }
+    } else {
+      this.capturePiece(clickedPiece);
+    }
+  }
+  capturePiece(clickedPiece) {
+    let allowCapture = false;
+    if (self.currentClickedPiece !== undefined) {
+      const name = self.currentClickedPiece.name;
+      let object = null;
+      let cellNo = clickedPiece.parentElement.id;
+      let currentPieceCellNo = self.currentClickedPiece.parentElement.id;
+
+      if (name === "queen") {
+        object = this.findObject(currentPieceCellNo);
+        if (object !== null) {
+          if (object.allowedMovesforQueen(cellNo)) {
+            allowCapture = true;
+          }
+        }
+      } else if (name === "pawn") {
+        object = this.findObject(currentPieceCellNo);
+        if (object !== null) {
+          if (object.allowedMovesforPawn(cellNo)) {
+            allowCapture = true;
+          }
+        }
+      } else if (name === "rook") {
+        object = this.findObject(currentPieceCellNo);
+        if (object !== null) {
+          if (object.allowedMovesforRook(cellNo)) {
+            allowCapture = true;
+          }
+        }
+      } else if (name === "bishop") {
+        object = this.findObject(currentPieceCellNo);
+        if (object !== null) {
+          if (object.allowedMovesforBishop(cellNo)) {
+            allowCapture = true;
+          }
+        }
+      } else if (name === "knight") {
+        object = this.findObject(currentPieceCellNo);
+        if (object !== null) {
+          if (object.allowedMovesforKnight(cellNo)) {
+            allowCapture = true;
+          }
+        }
+      } else if (name === "king") {
+        object = this.findObject(currentPieceCellNo);
+        if (object !== null) {
+          if (object.allowedMovesforKing(cellNo)) {
+            allowCapture = true;
+          }
+        }
+      }
+
+      if (allowCapture === true) {
+        self.moveSound.play();
+        document.getElementById(cellNo).removeChild(clickedPiece);
+
+        if (self.turn === "white") {
+          self.removeObjectfromArray(cellNo, self.blackPieces);
+        } else {
+          self.removeObjectfromArray(cellNo, self.whitePieces);
+        }
+
+        document.getElementById(cellNo).appendChild(self.currentClickedPiece);
+        object.setCellNo(cellNo);
+
+        self.undoAllMoves();
+        if (self.turn === "white") {
+          self.turn = "black";
+          $("#Turn")[0].textContent = "Black's Turn";
+        } else {
+          self.turn = "white";
+          $("#Turn")[0].textContent = "White's Turn";
+        }
+        self.currentClickedPiece = undefined;
+        self.IsKingInCheckmate();
+        self.undoAllMoves();
+      } else {
+        self.beepSound.play();
+      }
+    } else {
+      self.beepSound.play();
+    }
+  }
+  removeObjectfromArray(cellNo, array) {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i].getCellNo() === cellNo) {
+        if (i === array.length - 1) {
+          array.pop();
+        } else {
+          let temp = array[array.length - 1];
+          array[array.length - 1] = array[i];
+          array[i] = temp;
+          array.pop();
+          break;
+        }
+      }
+    }
+  }
+  findObject(id) {
+    if (self.turn === "white") {
+      for (let i = 0; i < self.whitePieces.length; i++) {
+        if (self.whitePieces[i].getCellNo() === id) {
+          return self.whitePieces[i];
+        }
+      }
+    } else {
+      for (let i = 0; i < self.blackPieces.length; i++) {
+        if (self.blackPieces[i].getCellNo() === id) {
+          return self.blackPieces[i];
+        }
+      }
+    }
+  }
+  undoAllowedMoves(turn, cellNo) {
+    if (turn === "white") {
+      self.whitePieces.forEach((element) => {
+        if (element.getCellNo() !== cellNo) {
+          self.MoveFunctions.undoAllowedMoves(element.getAllowedMoves());
+        }
+      });
+    } else {
+      self.blackPieces.forEach((element) => {
+        if (element.getCellNo() !== cellNo) {
+          self.MoveFunctions.undoAllowedMoves(element.getAllowedMoves());
+        }
+      });
+    }
+  }
+  cellClicked(cell) {
+    let allowMove = false;
+
+    if (self.currentClickedPiece !== undefined) {
+      const object = self.findObject(self.currentClickedPiece.parentElement.id);
+      if (self.currentClickedPiece.name === "pawn") {
+        if (object.allowedMovesforPawn(cell.id)) {
+          allowMove = true;
+        }
+      } else if (self.currentClickedPiece.name === "bishop") {
+        if (object.allowedMovesforBishop(cell.id)) {
+          allowMove = true;
+        }
+      } else if (self.currentClickedPiece.name === "rook") {
+        if (object.allowedMovesforRook(cell.id)) {
+          allowMove = true;
+        }
+      } else if (self.currentClickedPiece.name === "knight") {
+        if (object.allowedMovesforKnight(cell.id)) {
+          allowMove = true;
+        }
+      } else if (self.currentClickedPiece.name === "king") {
+        if (object.allowedMovesforKing(cell.id)) {
+          allowMove = true;
+        }
+      } else if (self.currentClickedPiece.name === "queen") {
+        if (object.allowedMovesforQueen(cell.id)) {
+          allowMove = true;
+        }
+      }
+
+      if (allowMove === true) {
+        self.moveSound.play();
+        let square = document.getElementById(cell.id);
+        square.append(self.currentClickedPiece);
+        object.setCellNo(cell.id);
+        self.undoAllMoves();
+        if (self.turn === "white") {
+          self.turn = "black";
+
+          document.getElementById("Turn").textContent = "Black's Turn";
+        } else {
+          self.turn = "white";
+
+          document.getElementById("Turn").textContent = "White's Turn";
+        }
+        self.currentClickedPiece = undefined;
+        self.IsKingInCheckmate();
+        self.undoAllMoves();
+      } else {
+        //BEEP SOUND PLAYS WHEN WE CLICK A CELL WHICH MOVE IS NOT ALLOWED
+        self.beepSound.play();
+      }
+    }
+  }
+  IsKingInCheckmate() {
+    let object = null;
+    if (self.turn === "white") {
+      for (let i = 0; i < self.whitePieces.length; i++) {
+        if (self.whitePieces[i].getName() === "king") {
+          object = self.whitePieces[i];
+          break;
+        }
+      }
+      object.checkKingCheckmate(self.whitePieces, self.blackPieces);
+    } else {
+      for (let i = 0; i < self.blackPieces.length; i++) {
+        if (self.blackPieces[i].getName() === "king") {
+          object = self.blackPieces[i];
+          break;
+        }
+      }
+
+      object.checkKingCheckmate(self.whitePieces, self.blackPieces);
+    }
+  }
+  undoAllMoves() {
+    if (self.turn === "white") {
+      self.whitePieces.forEach((element) => {
+        self.MoveFunctions.undoAllowedMoves(element.getAllowedMoves());
+      });
+    } else {
+      self.blackPieces.forEach((element) => {
+        self.MoveFunctions.undoAllowedMoves(element.getAllowedMoves());
+      });
+    }
+  }
 }
-let board = new Board();
-board.startClock();
-board.drawBoard();
-window.onload = function () {
-  board.drawPieces();
-};
-board.addPiecestoArray();

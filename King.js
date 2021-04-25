@@ -1,414 +1,173 @@
 class King extends Piece {
-  kingColor;
-  kingChecked = false;
   allowedMoves = [];
   attackedCells = [];
-  constructor(imgUrl, cellNo, name, id, color) {
-    super(imgUrl, cellNo, name, id, color);
+  checkSound;
+  constructor(imgUrl, cellNo, name, id) {
+    super(imgUrl, cellNo, name, id);
+    this.checkSound = $("#myAudio2")[0];
+    this.checkSound.volume = 0.5;
   }
-  undoAllowedMoves() {
-    this.allowedMoves.forEach((element) => {
-      document.getElementById(element).style.border = "1px solid black";
-    });
-    this.allowedMoves = [];
+  getCellNo() {
+    return super.getCellNo();
   }
-  allowedMovesforKing(targetCell) {
-    for (let i = 0; i < this.allowedMoves.length; i++) {
-      if (targetCell === this.allowedMoves[i]) {
-        this.undoAllowedMoves();
-        this.allowedMoves = [];
-        return true;
-      }
-    }
-    return false;
+  setCellNo(cellNo) {
+    super.setCellNo(cellNo);
   }
-  row(i) {
-    let row;
-    if (i === 1) {
-      row = "a";
-    } else if (i === 2) {
-      row = "b";
-    } else if (i === 3) {
-      row = "c";
-    } else if (i === 4) {
-      row = "d";
-    } else if (i === 5) {
-      row = "e";
-    } else if (i === 6) {
-      row = "f";
-    } else if (i === 7) {
-      row = "g";
-    } else if (i === 8) {
-      row = "h";
-    }
-    return row;
+  getColor() {
+    return super.getColor();
   }
-  availableMovesforKing(clickedCell, clickedPiece, turn) {
-    if (clickedPiece === "w") {
-      this.kingColor = "w";
-    } else {
-      this.kingColor = "b";
-    }
+  getName() {
+    return super.getName();
+  }
+  getAllowedMoves() {
+    return this.allowedMoves;
+  }
+  availableMovesforKing(turn) {
+    let color = this.getColor();
+
+    this.MoveFunctions = new moveFunctions();
+    let clickedCell = this.getCellNo();
     let clickVal;
     var clickedCellrow = clickedCell.substring(0, 1);
     var clickedCellnumString = clickedCell.replace(/^\D+/g, "");
     var clickedCellnum = parseInt(clickedCellnumString);
-    if (clickedPiece === turn) {
-      switch (clickedCellrow) {
-        case "a":
-          clickVal = 1;
-          break;
-
-        case "b":
-          clickVal = 2;
-          break;
-
-        case "c":
-          clickVal = 3;
-          break;
-
-        case "d":
-          clickVal = 4;
-          break;
-
-        case "e":
-          clickVal = 5;
-          break;
-
-        case "f":
-          clickVal = 6;
-          break;
-
-        case "g":
-          clickVal = 7;
-          break;
-        case "h":
-          clickVal = 8;
-          break;
-        default:
-          break;
-      }
-
+    if (color === turn) {
+      clickVal = this.MoveFunctions.column(clickedCellrow);
+      let object = null;
       let i = clickedCellnum;
       if (i - 1 >= 1) {
         i--;
-        this.authorize(clickedCellrow, i);
+        this.authorize(clickedCellrow, i, object, color);
       }
       i = clickedCellnum;
       if (i + 1 < 9) {
         i++;
-        this.authorize(clickedCellrow, i);
+        this.authorize(clickedCellrow, i, object, color);
       }
       i = clickedCellnum;
       let r = clickVal;
       let row;
       if (r + 1 <= 8) {
-        row = this.row(r + 1);
-        this.authorize(row, i);
+        row = this.MoveFunctions.row(r + 1);
+        this.authorize(row, i, object, color);
         if (i - 1 >= 1) {
-          row = this.row(r + 1);
-          this.authorize(row, i - 1);
+          row = this.MoveFunctions.row(r + 1);
+          this.authorize(row, i - 1, object, color);
         }
         if (i + 1 < 9) {
-          row = this.row(r + 1);
-          this.authorize(row, i + 1);
+          row = this.MoveFunctions.row(r + 1);
+          this.authorize(row, i + 1, object, color);
         }
       }
       i = clickedCellnum;
       r = clickVal;
       if (r - 1 >= 1) {
-        row = this.row(r - 1);
-        this.authorize(row, i);
+        row = this.MoveFunctions.row(r - 1);
+        this.authorize(row, i, object, color);
         if (i - 1 >= 1) {
-          row = this.row(r - 1);
-          this.authorize(row, i - 1);
+          row = this.MoveFunctions.row(r - 1);
+          this.authorize(row, i - 1, object, color);
         }
         if (i + 1 < 9) {
-          row = this.row(r - 1);
-          this.authorize(row, i + 1);
+          row = this.MoveFunctions.row(r - 1);
+          this.authorize(row, i + 1, object, color);
         }
       }
     }
-  }
-  authorize(clickedCellrow, i) {
-    if (document.getElementById(clickedCellrow + i).hasChildNodes()) {
-      if (
-        document.getElementById(clickedCellrow + i).firstChild.name !==
-        this.kingColor
-      ) {
-        this.allowedMoves.push(clickedCellrow + i);
-      }
-    } else {
-      this.allowedMoves.push(clickedCellrow + i);
-    }
-  }
-  showColoredMoves() {
-    this.attackedCells = [];
-    this.allowedMoves.forEach((element) => {
-      document.getElementById(element).style.border = "6px solid red";
-    });
-  }
 
-  checkAttackedCells(
-    whitePieces,
-    blackPieces,
-    whitepiecesobjects,
-    blackpiecesobjects,
-    call
-  ) {
-    this.attackedCells = [];
-    if (this.kingColor === "w") {
-      blackPieces.forEach((element1) => {
-        if (element1.Name === "queen") {
-          blackpiecesobjects.forEach((element) => {
-            this.checkElements(element, element1, "b");
-          });
-        } else if (element1.Name === "rook") {
-          blackpiecesobjects.forEach((element) => {
-            this.checkElements(element, element1, "b");
-          });
-        } else if (element1.Name === "bishop") {
-          blackpiecesobjects.forEach((element) => {
-            this.checkElements(element, element1, "b");
-          });
-        } else if (element1.Name === "knight") {
-          blackpiecesobjects.forEach((element) => {
-            this.checkElements(element, element1, "b");
-          });
-        } else if (element1.Name === "pawn") {
-          blackpiecesobjects.forEach((element) => {
-            this.checkElements(element, element1, "b");
-          });
-        }
-      });
-    } else {
-      whitePieces.forEach((element1) => {
-        if (element1.Name === "queen") {
-          whitepiecesobjects.forEach((element) => {
-            this.checkElements(element, element1, "w");
-          });
-        } else if (element1.Name === "rook") {
-          whitepiecesobjects.forEach((element) => {
-            this.checkElements(element, element1, "w");
-          });
-        } else if (element1.Name === "bishop") {
-          whitepiecesobjects.forEach((element) => {
-            this.checkElements(element, element1, "w");
-          });
-        } else if (element1.Name === "knight") {
-          whitepiecesobjects.forEach((element) => {
-            this.checkElements(element, element1, "w");
-          });
-        } else if (element1.Name === "pawn") {
-          whitepiecesobjects.forEach((element) => {
-            this.checkElements(element, element1, "w");
-          });
-        }
-      });
-    }
-    //console.log(this.allowedMoves);
     for (let i = 0; i < this.allowedMoves.length; i++) {
-      for (let r = 0; r < this.attackedCells.length; r++) {
-        let element = this.allowedMoves[i];
-        let element2 = this.attackedCells[r];
+      let element = this.allowedMoves[i];
+      for (let a = 0; a < this.attackedCells.length; a++) {
+        let element2 = this.attackedCells[a];
 
         if (element === element2) {
-          if (i + 1 === this.allowedMoves.length) {
+          if (i === this.allowedMoves.length - 1) {
             this.allowedMoves.pop();
             break;
           } else {
-            let temp = this.allowedMoves[i];
-            this.allowedMoves[i] = this.allowedMoves[
-              this.allowedMoves.length - 1
+            let temp = this.allowedMoves[this.allowedMoves.length - 1];
+            this.allowedMoves[this.allowedMoves.length - 1] = this.allowedMoves[
+              i
             ];
-            this.allowedMoves[this.allowedMoves.length - 1] = temp;
+            this.allowedMoves[i] = temp;
             this.allowedMoves.pop();
+
             i--;
+
             break;
           }
         }
       }
     }
-    if (call === true) {
-      let id;
-      if (this.kingColor === "w") {
-        whitePieces.forEach((element) => {
-          if (element.Name === "king") {
-            id = element.CellNo;
-          }
-        });
-      } else {
-        blackPieces.forEach((element) => {
-          if (element.Name === "king") {
-            id = element.CellNo;
-          }
-        });
-      }
-      for (let i = 0; i < this.attackedCells.length; i++) {
-        if (this.attackedCells[i] === id) {
-          this.kingChecked = true;
-          return this.kingChecked;
-        } else if (i === this.attackedCells.length - 1) {
-          this.kingChecked = false;
-          return this.kingChecked;
-        }
-      }
+  }
+  authorize(row, i, object, color) {
+    object = this.MoveFunctions.findObjectonCellNo(row + i);
+    if (object === null) {
+      this.allowedMoves.push(row + i);
+    } else if (object.getColor() !== color) {
+      this.allowedMoves.push(row + i);
     }
   }
-
-  checkElements(element, element1, color) {
-    let attackCellarray2 = [];
-    if (
-      (element instanceof Bishop && element1.Name === "queen") ||
-      (element instanceof Bishop && element1.Name === "bishop")
-    ) {
-      element.allowedMoves.length = 0;
-      attackCellarray2 = element.availableMovesforBishop(
-        element1.CellNo,
-        color,
-        color,
-        true
-      );
-
-      this.attackedCells.push.apply(this.attackedCells, attackCellarray2);
-    } else if (
-      (element instanceof Rook && element1.Name === "queen") ||
-      (element instanceof Rook && element1.Name === "rook")
-    ) {
-      element.allowedMoves.length = 0;
-      attackCellarray2 = element.availabeMovesforRook(
-        element1.CellNo,
-        color,
-        color,
-        true
-      );
-
-      this.attackedCells.push.apply(this.attackedCells, attackCellarray2);
-    } else if (element instanceof Knight && element1.Name === "knight") {
-      element.allowedMoves.length = 0;
-      attackCellarray2 = element.availableMovesforKnight(
-        element1.CellNo,
-        color,
-        color,
-        true
-      );
-      this.attackedCells.push.apply(this.attackedCells, attackCellarray2);
-    } else if (element instanceof Pawn && element1.Name === "pawn") {
-      attackCellarray2 = this.attackingcellsforPawn(
-        element1.CellNo,
-        color,
-        color
-      );
-      this.attackedCells.push.apply(this.attackedCells, attackCellarray2);
-    }
-
-    //console.log(this.attackedCells);
+  allowedMovesforKing(targetCell) {
+    if (this.MoveFunctions.allowedMoves(targetCell, this.allowedMoves))
+      return true;
+    return false;
   }
-  attackingcellsforPawn(clickedCell, clickedPiece, turn) {
-    let pawnColor;
-    if (clickedPiece === "w") {
-      pawnColor = "w";
+  checkKingCheckmate(whitePieces, blackPieces) {
+    if (this.getColor() === "white") {
+      this.checkAttackedCells(blackPieces, "black");
     } else {
-      pawnColor = "b";
+      this.checkAttackedCells(whitePieces, "white");
     }
-    let clickVal;
-    var clickedCellrow = clickedCell.substring(0, 1);
-    var clickedCellnumString = clickedCell.replace(/^\D+/g, "");
-    var clickedCellnum = parseInt(clickedCellnumString);
-    if (clickedPiece === turn) {
-      switch (clickedCellrow) {
-        case "a":
-          clickVal = 1;
-          break;
-
-        case "b":
-          clickVal = 2;
-          break;
-
-        case "c":
-          clickVal = 3;
-          break;
-
-        case "d":
-          clickVal = 4;
-          break;
-
-        case "e":
-          clickVal = 5;
-          break;
-
-        case "f":
-          clickVal = 6;
-          break;
-
-        case "g":
-          clickVal = 7;
-          break;
-        case "h":
-          clickVal = 8;
-          break;
-        default:
-          break;
+  }
+  checkAttackedCells(array, color) {
+    this.attackedCells.length = 0;
+    array.forEach((element) => {
+      const name = element.name;
+      if (name === "pawn") {
+        element.attackingcellsforPawn(color);
+        //  console.log(element.getAllowedMoves());
+        this.attackedCells.push.apply(
+          this.attackedCells,
+          element.getAllowedMoves()
+        );
+      } else if (name === "queen") {
+        element.availableMovesforQueen(color);
+        this.attackedCells.push.apply(
+          this.attackedCells,
+          element.getAllowedMoves()
+        );
+      } else if (name === "rook") {
+        element.availableMovesforRook(color);
+        this.attackedCells.push.apply(
+          this.attackedCells,
+          element.getAllowedMoves()
+        );
+      } else if (name === "bishop") {
+        element.availableMovesforBishop(color);
+        this.attackedCells.push.apply(
+          this.attackedCells,
+          element.getAllowedMoves()
+        );
+      } else if (name === "knight") {
+        element.availableMovesforKnight(color);
+        this.attackedCells.push.apply(
+          this.attackedCells,
+          element.getAllowedMoves()
+        );
       }
-      let i = clickedCellnum;
-      let r = clickVal;
-      let row;
-      row = this.row(r);
-      if (pawnColor === "w") {
-        r = clickVal;
-        i = clickedCellnum;
-        if (r === 8) {
-          i--;
-          row = this.row(r - 1);
-
-          this.attackedCells.push(row + i);
-        }
-        i = clickedCellnum;
-        r = clickVal;
-        if (r === 1) {
-          i--;
-          row = this.row(r + 1);
-
-          this.attackedCells.push(row + i);
-        }
-        r = clickVal;
-        i = clickedCellnum;
-        if (r >= 2 && r <= 7) {
-          i--;
-          row = this.row(r + 1);
-          let row2 = this.row(r - 1);
-
-          this.attackedCells.push(row + i);
-          this.attackedCells.push(row2 + i);
-        }
-      } else {
-        r = clickVal;
-        i = clickedCellnum;
-        if (r === 8) {
-          i++;
-          row = this.row(r - 1);
-
-          this.attackedCells.push(row + i);
-        }
-        i = clickedCellnum;
-        r = clickVal;
-        if (r === 1) {
-          i++;
-          row = this.row(r + 1);
-
-          this.attackedCells.push(row + i);
-        }
-        r = clickVal;
-        i = clickedCellnum;
-        if (r >= 2 && r <= 7) {
-          i++;
-          row = this.row(r + 1);
-          let row2 = this.row(r - 1);
-
-          this.attackedCells.push(row + i);
-          this.attackedCells.push(row2 + i);
-        }
+    });
+    if (this.KingAttackedOrNot()) {
+      this.checkSound.play();
+    }
+  }
+  KingAttackedOrNot() {
+    let cellNo = this.getCellNo();
+    for (let i = 0; i < this.attackedCells.length; i++) {
+      if (this.attackedCells[i] === cellNo) {
+        return true;
       }
     }
+    return false;
   }
 }
