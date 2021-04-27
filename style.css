@@ -6,31 +6,29 @@
 
 #container {
   display: flex;
-
-  margin-left: 40%;
-}
-
-.rows {
-  display: flex;
-  flex-wrap: nowrap;
   flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 520px;
+
+  margin: 0px auto;
+  margin-top: 3em;
 }
-#Turn {
+#chess_container {
   display: flex;
-  justify-content: center;
-  margin-top: 5%;
-  font-size: 20px;
+}
+
+#Turn {
 }
 
 #White_Clock {
   background-color: black;
   padding: 5px;
-  list-style: 5px;
   width: 50px;
   height: 30px;
   color: white;
-  position: absolute;
-  left: 500px;
+  margin-left: auto;
+  margin-right: 1.5em;
 }
 
 #Black_Clock {
@@ -39,10 +37,11 @@
   width: 50px;
   height: 30px;
   color: white;
-  left: 500px;
-
-  position: absolute;
+  margin-left: auto;
+  margin-top: 0.5em;
+  margin-right: 1.5em;
 }
+
 #over {
   color: black;
   font-size: 55px;
@@ -86,63 +85,4 @@
 }
 #promotionDivWhite div:nth-child(4) img {
   border-right: none;
-}
-@media only screen and (max-width: 1350px) {
-  #White_Clock {
-    left: 400px;
-  }
-  #Black_Clock {
-    left: 400px;
-  }
-}
-@media only screen and (max-width: 1150px) {
-  #White_Clock {
-    left: 250px;
-  }
-  #Black_Clock {
-    left: 250px;
-  }
-}
-@media only screen and (max-width: 1050px) {
-  #White_Clock {
-    left: 200px;
-  }
-  #Black_Clock {
-    left: 200px;
-  }
-}
-
-@media only screen and (max-width: 768px) {
-  #container {
-    margin-left: 20%;
-  }
-  #White_Clock {
-    left: 50px;
-  }
-  #Black_Clock {
-    left: 50px;
-  }
-}
-
-@media (max-width: 576px) {
-  #container {
-    margin-left: 5%;
-  }
-  #White_Clock {
-    left: 400px;
-  }
-  #Black_Clock {
-    margin-top: 2%;
-    left: 400px;
-  }
-}
-
-@media (max-width: 368px) {
-  #White_Clock {
-    left: 400px;
-  }
-  #Black_Clock {
-    margin-top: 2%;
-    left: 400px;
-  }
 }
