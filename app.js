@@ -3,7 +3,7 @@ const t0 = performance.now();
 let board = new Board();
 $(function () {
   board.drawBoard();
-  //board.startClock();
+  board.startClock();
   board.drawPieces();
   board.addFunctionality();
 
