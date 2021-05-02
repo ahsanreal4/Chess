@@ -117,6 +117,7 @@ class Board {
               whitesecs = 0;
               this.gameOver = true;
               this.showGameOver();
+              clearInterval(interval);
             }
           } else {
             whitesecs--;
@@ -125,6 +126,7 @@ class Board {
           this.checkmate.play();
           this.gameOver = true;
           this.showGameOver();
+          clearInterval(interval);
         }
         whiteCounter.textContent = whiteminutes + ": " + whitesecs;
       } else {
@@ -142,14 +144,16 @@ class Board {
               blacksecs = 0;
               this.gameOver = true;
               this.showGameOver();
+              clearInterval(interval);
             }
           } else {
             blacksecs--;
           }
         } else {
-          this.checkmate.play();
+          this.checkmateSound.play();
           this.gameOver = true;
           this.showGameOver();
+          clearInterval(interval);
         }
         blackCounter.textContent = blackmins + ": " + blacksecs;
       }
@@ -512,6 +516,7 @@ class Board {
         self.IsKingInCheckmate();
         if (self.check === true) {
           self.checkSound.play();
+          self.check = false;
         }
         self.undoAllMoves();
       } else {
@@ -624,6 +629,7 @@ class Board {
         self.IsKingInCheckmate();
         if (self.check === true) {
           self.checkSound.play();
+          self.check = false;
         }
         self.undoAllMoves();
       } else {
