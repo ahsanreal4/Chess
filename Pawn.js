@@ -178,6 +178,7 @@ class Pawn extends Piece {
     return false;
   }
   attackingcellsforPawn(turn) {
+    this.allowedMoves.length = 0;
     let color = this.getColor();
 
     this.MoveFunctions = new moveFunctions();

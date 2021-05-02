@@ -1,11 +1,11 @@
 class King extends Piece {
   allowedMoves = [];
   attackedCells = [];
-  checkSound;
+  kingChecked;
+  kingCheckmate;
+
   constructor(imgUrl, cellNo, name, id) {
     super(imgUrl, cellNo, name, id);
-    this.checkSound = $("#myAudio2")[0];
-    this.checkSound.volume = 0.5;
   }
   getCellNo() {
     return super.getCellNo();
@@ -21,6 +21,12 @@ class King extends Piece {
   }
   getAllowedMoves() {
     return this.allowedMoves;
+  }
+  getCheckmate() {
+    return this.kingCheckmate;
+  }
+  getChecked() {
+    return this.kingChecked;
   }
   availableMovesforKing(turn) {
     let color = this.getColor();
@@ -114,11 +120,102 @@ class King extends Piece {
     return false;
   }
   checkKingCheckmate(whitePieces, blackPieces) {
-    if (this.getColor() === "white") {
+    const color1 = this.getColor();
+    if (color1 === "white") {
       this.checkAttackedCells(blackPieces, "black");
     } else {
       this.checkAttackedCells(whitePieces, "white");
     }
+    this.availableMovesforKing(color1);
+    if (this.KingAttackedOrNot()) {
+      this.kingChecked = true;
+      let color;
+
+      if (this.allowedMoves.length === 0) {
+        let checkmate;
+        if (color1 === "white") {
+          color = "white";
+          checkmate = this.checkMoveToPreventCheckmate(
+            color,
+            board.whitePieces
+          );
+        } else {
+          color = "black";
+          checkmate = this.checkMoveToPreventCheckmate(
+            color,
+            board.blackPieces
+          );
+        }
+        if (checkmate) {
+          //this.checkmateSound.play();
+          board.checkmate = true;
+        } else {
+          //  this.checkSound.play();
+          //  this.beepSound.play();
+          board.check = true;
+        }
+      } else {
+        board.check = true;
+        //  this.beepSound.play();
+        // this.checkSound.play();
+      }
+    }
+  }
+  checkMoveToPreventCheckmate(color, array) {
+    let moves;
+
+    for (let i = 0; i < array.length; i++) {
+      moves = [];
+
+      let element = array[i];
+      element.allowedMoves.length = 0;
+      if (element.name === "pawn") {
+        element.availableMovesforPawn(color);
+        moves.push.apply(moves, element.getAllowedMoves());
+
+        // element.attackingcellsforPawn("white");
+        // moves.push.apply(moves, element.getAllowedMoves());
+      } else if (element.name === "queen") {
+        element.availableMovesforQueen(color);
+        moves.push.apply(moves, element.getAllowedMoves());
+      } else if (element.name === "bishop") {
+        element.availableMovesforBishop(color);
+        moves.push.apply(moves, element.getAllowedMoves());
+      } else if (element.name === "knight") {
+        element.availableMovesforKnight(color);
+        moves.push.apply(moves, element.getAllowedMoves());
+      } else if (element.name === "rook") {
+        element.availableMovesforRook(color);
+        moves.push.apply(moves, element.getAllowedMoves());
+      }
+      element.allowedMoves.length = 0;
+      if (moves.length !== 0) {
+        let temp = element.cellNo;
+        if (!this.loopMovesArray(moves, element)) {
+          element.cellNo = temp;
+          return false;
+        }
+        element.cellNo = temp;
+      }
+    }
+    return true;
+  }
+
+  loopMovesArray(moves, element) {
+    let color = element.getColor();
+    for (let i = 0; i < moves.length; i++) {
+      element.cellNo = moves[i];
+      if (color === "white") {
+        this.checkAttackedCells(board.blackPieces, "black");
+      } else {
+        this.checkAttackedCells(board.whitePieces, "white");
+      }
+
+      if (!this.KingAttackedOrNot()) {
+        return false;
+      }
+    }
+    return true;
   }
   checkAttackedCells(array, color) {
     this.attackedCells.length = 0;
@@ -156,10 +253,8 @@ class King extends Piece {
           element.getAllowedMoves()
         );
       }
+      element.allowedMoves.length = 0;
     });
-    if (this.KingAttackedOrNot()) {
-      this.checkSound.play();
-    }
   }
   KingAttackedOrNot() {
     let cellNo = this.getCellNo();

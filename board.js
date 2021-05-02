@@ -10,6 +10,9 @@ class Board {
   currentClickedPiece;
   moveSound;
   beepSound;
+  check;
+  checkSound;
+  checkmateSound;
 
   constructor() {
     this.elements = [];
@@ -18,12 +21,17 @@ class Board {
     this.whitePieces = [];
     this.blackPieces = [];
     this.gameOver = false;
+    this.check = false;
     this.MoveFunctions = new moveFunctions();
     this.moveSound = $("#myAudio")[0];
     this.beepSound = $("#myAudio4")[0];
-
-    this.moveSound.volume = 0.4;
+    this.checkSound = $("#myAudio2")[0];
+    this.checkmateSound = $("#myAudio3")[0];
+    this.checkSound.volume = 0.1;
+    this.checkmateSound.volume = 0.1;
     this.beepSound.volume = 0.1;
+    this.moveSound.volume = 0.4;
+
     self = this;
   }
   drawBoard() {
@@ -114,6 +122,7 @@ class Board {
             whitesecs--;
           }
         } else {
+          this.checkmate.play();
           this.gameOver = true;
           this.showGameOver();
         }
@@ -138,6 +147,7 @@ class Board {
             blacksecs--;
           }
         } else {
+          this.checkmate.play();
           this.gameOver = true;
           this.showGameOver();
         }
@@ -292,10 +302,10 @@ class Board {
   PieceClicked(clickedPiece) {
     if (clickedPiece.id === self.turn) {
       const name = clickedPiece.name;
-
+      var object;
       switch (name) {
         case "pawn":
-          var object = self.findObject(clickedPiece.parentElement.id);
+          object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
             object.availableMovesforPawn(self.turn);
@@ -312,7 +322,7 @@ class Board {
           break;
 
         case "queen":
-          var object = self.findObject(clickedPiece.parentElement.id);
+          object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
             object.availableMovesforQueen(self.turn);
@@ -328,7 +338,7 @@ class Board {
           break;
 
         case "king":
-          var object = self.findObject(clickedPiece.parentElement.id);
+          object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
             object.availableMovesforKing(self.turn);
@@ -345,7 +355,7 @@ class Board {
           break;
 
         case "rook":
-          var object = self.findObject(clickedPiece.parentElement.id);
+          object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
             object.availableMovesforRook(self.turn);
@@ -361,7 +371,7 @@ class Board {
           break;
 
         case "knight":
-          var object = self.findObject(clickedPiece.parentElement.id);
+          object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
             object.availableMovesforKnight(self.turn);
@@ -377,7 +387,7 @@ class Board {
           break;
 
         case "bishop":
-          var object = self.findObject(clickedPiece.parentElement.id);
+          object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
             object.availableMovesforBishop(self.turn);
@@ -450,7 +460,33 @@ class Board {
           }
         }
       }
+      if (allowCapture) {
+        if (object !== null) {
+          let temp = object.getCellNo();
 
+          let newObject = self.findObject(cellNo);
+
+          if (self.turn === "white") {
+            self.removeObjectfromArray(cellNo, self.blackPieces);
+          } else {
+            self.removeObjectfromArray(cellNo, self.whitePieces);
+          }
+          object.setCellNo(cellNo);
+
+          self.IsKingInCheckmate();
+          if (self.check === true) {
+            self.beepSound.play();
+            allowCapture = false;
+          }
+          self.check = false;
+          object.setCellNo(temp);
+          if (self.turn === "white") {
+            self.blackPieces.push(newObject);
+          } else {
+            self.whitePieces.push(newObject);
+          }
+        }
+      }
       if (allowCapture === true) {
         self.moveSound.play();
         document.getElementById(cellNo).removeChild(clickedPiece);
@@ -474,6 +510,9 @@ class Board {
         }
         self.currentClickedPiece = undefined;
         self.IsKingInCheckmate();
+        if (self.check === true) {
+          self.checkSound.play();
+        }
         self.undoAllMoves();
       } else {
         self.beepSound.play();
@@ -498,17 +537,15 @@ class Board {
     }
   }
   findObject(id) {
-    if (self.turn === "white") {
-      for (let i = 0; i < self.whitePieces.length; i++) {
-        if (self.whitePieces[i].getCellNo() === id) {
-          return self.whitePieces[i];
-        }
+    for (let i = 0; i < self.whitePieces.length; i++) {
+      if (self.whitePieces[i].getCellNo() === id) {
+        return self.whitePieces[i];
       }
-    } else {
-      for (let i = 0; i < self.blackPieces.length; i++) {
-        if (self.blackPieces[i].getCellNo() === id) {
-          return self.blackPieces[i];
-        }
+    }
+
+    for (let i = 0; i < self.blackPieces.length; i++) {
+      if (self.blackPieces[i].getCellNo() === id) {
+        return self.blackPieces[i];
       }
     }
   }
@@ -557,7 +594,17 @@ class Board {
           allowMove = true;
         }
       }
-
+      if (allowMove) {
+        let temp = object.getCellNo();
+        object.setCellNo(cell.id);
+        self.IsKingInCheckmate();
+        if (self.check === true) {
+          self.beepSound.play();
+          allowMove = false;
+        }
+        self.check = false;
+        object.setCellNo(temp);
+      }
       if (allowMove === true) {
         self.moveSound.play();
         let square = document.getElementById(cell.id);
@@ -575,6 +622,9 @@ class Board {
         }
         self.currentClickedPiece = undefined;
         self.IsKingInCheckmate();
+        if (self.check === true) {
+          self.checkSound.play();
+        }
         self.undoAllMoves();
       } else {
         //BEEP SOUND PLAYS WHEN WE CLICK A CELL WHICH MOVE IS NOT ALLOWED
@@ -591,7 +641,6 @@ class Board {
           break;
         }
       }
-      object.checkKingCheckmate(self.whitePieces, self.blackPieces);
     } else {
       for (let i = 0; i < self.blackPieces.length; i++) {
         if (self.blackPieces[i].getName() === "king") {
@@ -599,9 +648,8 @@ class Board {
           break;
         }
       }
-
-      object.checkKingCheckmate(self.whitePieces, self.blackPieces);
     }
+    object.checkKingCheckmate(self.whitePieces, self.blackPieces);
   }
   undoAllMoves() {
     if (self.turn === "white") {
