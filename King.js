@@ -3,7 +3,7 @@ class King extends Piece {
   attackedCells = [];
   kingChecked;
   kingCheckmate;
-
+  allyProtection;
   constructor(imgUrl, cellNo, name, id) {
     super(imgUrl, cellNo, name, id);
   }
@@ -28,7 +28,8 @@ class King extends Piece {
   getChecked() {
     return this.kingChecked;
   }
-  availableMovesforKing(turn) {
+  availableMovesforKing(turn, allyProtection, dontCheckattackedCells) {
+    this.allyProtection = allyProtection;
     let color = this.getColor();
 
     this.MoveFunctions = new moveFunctions();
@@ -80,27 +81,28 @@ class King extends Piece {
         }
       }
     }
+    if (dontCheckattackedCells === false) {
+      for (let i = 0; i < this.allowedMoves.length; i++) {
+        let element = this.allowedMoves[i];
+        for (let a = 0; a < this.attackedCells.length; a++) {
+          let element2 = this.attackedCells[a];
 
-    for (let i = 0; i < this.allowedMoves.length; i++) {
-      let element = this.allowedMoves[i];
-      for (let a = 0; a < this.attackedCells.length; a++) {
-        let element2 = this.attackedCells[a];
+          if (element === element2) {
+            if (i === this.allowedMoves.length - 1) {
+              this.allowedMoves.pop();
+              break;
+            } else {
+              let temp = this.allowedMoves[this.allowedMoves.length - 1];
+              this.allowedMoves[
+                this.allowedMoves.length - 1
+              ] = this.allowedMoves[i];
+              this.allowedMoves[i] = temp;
+              this.allowedMoves.pop();
 
-        if (element === element2) {
-          if (i === this.allowedMoves.length - 1) {
-            this.allowedMoves.pop();
-            break;
-          } else {
-            let temp = this.allowedMoves[this.allowedMoves.length - 1];
-            this.allowedMoves[this.allowedMoves.length - 1] = this.allowedMoves[
-              i
-            ];
-            this.allowedMoves[i] = temp;
-            this.allowedMoves.pop();
+              i--;
 
-            i--;
-
-            break;
+              break;
+            }
           }
         }
       }
@@ -112,6 +114,10 @@ class King extends Piece {
       this.allowedMoves.push(row + i);
     } else if (object.getColor() !== color) {
       this.allowedMoves.push(row + i);
+    } else if (object.getColor() === color) {
+      if (this.allyProtection === true) {
+        this.allowedMoves.push(row + i);
+      }
     }
   }
   allowedMovesforKing(targetCell) {
@@ -126,7 +132,7 @@ class King extends Piece {
     } else {
       this.checkAttackedCells(whitePieces, "white");
     }
-    this.availableMovesforKing(color1);
+    this.availableMovesforKing(color1, false, false);
     if (this.KingAttackedOrNot()) {
       this.kingChecked = true;
       let color;
@@ -176,18 +182,19 @@ class King extends Piece {
         // element.attackingcellsforPawn("white");
         // moves.push.apply(moves, element.getAllowedMoves());
       } else if (element.name === "queen") {
-        element.availableMovesforQueen(color);
+        element.availableMovesforQueen(color, false);
         moves.push.apply(moves, element.getAllowedMoves());
       } else if (element.name === "bishop") {
-        element.availableMovesforBishop(color);
+        element.availableMovesforBishop(color, false);
         moves.push.apply(moves, element.getAllowedMoves());
       } else if (element.name === "knight") {
-        element.availableMovesforKnight(color);
+        element.availableMovesforKnight(color, false);
         moves.push.apply(moves, element.getAllowedMoves());
       } else if (element.name === "rook") {
-        element.availableMovesforRook(color);
+        element.availableMovesforRook(color, false);
         moves.push.apply(moves, element.getAllowedMoves());
       }
+
       element.allowedMoves.length = 0;
       if (moves.length !== 0) {
         let temp = element.cellNo;
@@ -204,13 +211,27 @@ class King extends Piece {
   loopMovesArray(moves, element) {
     let color = element.getColor();
     for (let i = 0; i < moves.length; i++) {
+      const object = board.MoveFunctions.findObjectonCellNo(moves[i]);
+      if (object !== undefined && object !== null) {
+        if (object.getColor() === "black") {
+          board.removeObjectfromArray(moves[i], board.blackPieces);
+        } else {
+          board.removeObjectfromArray(moves[i], board.whitePieces);
+        }
+      }
       element.cellNo = moves[i];
       if (color === "white") {
         this.checkAttackedCells(board.blackPieces, "black");
       } else {
         this.checkAttackedCells(board.whitePieces, "white");
       }
-
+      if (object !== undefined && object !== null) {
+        if (object.getColor() === "black") {
+          board.blackPieces.push(object);
+        } else {
+          board.whitePieces.push(object);
+        }
+      }
       if (!this.KingAttackedOrNot()) {
         return false;
       }
@@ -229,30 +250,38 @@ class King extends Piece {
           element.getAllowedMoves()
         );
       } else if (name === "queen") {
-        element.availableMovesforQueen(color);
+        element.availableMovesforQueen(color, true);
         this.attackedCells.push.apply(
           this.attackedCells,
           element.getAllowedMoves()
         );
       } else if (name === "rook") {
-        element.availableMovesforRook(color);
+        element.availableMovesforRook(color, true);
         this.attackedCells.push.apply(
           this.attackedCells,
           element.getAllowedMoves()
         );
       } else if (name === "bishop") {
-        element.availableMovesforBishop(color);
+        element.availableMovesforBishop(color, true);
         this.attackedCells.push.apply(
           this.attackedCells,
           element.getAllowedMoves()
         );
       } else if (name === "knight") {
-        element.availableMovesforKnight(color);
+        element.availableMovesforKnight(color, true);
         this.attackedCells.push.apply(
           this.attackedCells,
           element.getAllowedMoves()
         );
+      } else if (name === "king") {
+        element.availableMovesforKing(color, true);
+        this.attackedCells.push.apply(
+          this.attackedCells,
+          element.getAllowedMoves(),
+          true
+        );
       }
+
       element.allowedMoves.length = 0;
     });
   }

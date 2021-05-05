@@ -1,6 +1,7 @@
 class Queen extends Piece {
   allowedMoves = [];
   MoveFunctions;
+  allyProtection;
   constructor(imgUrl, cellNo, name, id) {
     super(imgUrl, cellNo, name, id);
   }
@@ -19,8 +20,10 @@ class Queen extends Piece {
   getAllowedMoves() {
     return this.allowedMoves;
   }
-
-  availableMovesforQueen(turn) {
+  //ally Protection is used when we have to get the moves when
+  //the piece is defending its ally piece.
+  availableMovesforQueen(turn, allyProtection) {
+    this.allyProtection = allyProtection;
     let color = this.getColor();
 
     this.MoveFunctions = new moveFunctions();
@@ -129,8 +132,11 @@ class Queen extends Piece {
       return false;
     } else {
       if (object.getColor() === color) {
+        if (this.allyProtection) {
+          this.allowedMoves.push(row + i);
+        }
         return true;
-      } else {
+      } else if (object.getColor() !== color) {
         this.allowedMoves.push(row + i);
         return true;
       }

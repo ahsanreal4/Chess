@@ -10,3 +10,8 @@ $(function () {
   const t1 = performance.now();
   console.log(`Game Loaded in ${t1 - t0} milliseconds.`);
 });
+document.body.addEventListener("keyup", function (e) {
+  if (e.code === "KeyR") {
+    board.reset();
+  }
+});

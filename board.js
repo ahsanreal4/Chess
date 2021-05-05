@@ -13,6 +13,7 @@ class Board {
   check;
   checkSound;
   checkmateSound;
+  interval;
 
   constructor() {
     this.elements = [];
@@ -95,7 +96,7 @@ class Board {
     let blackmins = 4;
     let blacksecs = 60;
 
-    let interval = setInterval(() => {
+    this.interval = setInterval(() => {
       if ($("#Turn")[0].textContent === "White's Turn") {
         this.turn = "white";
       } else {
@@ -108,7 +109,7 @@ class Board {
               whiteminutes--;
             } else {
               whiteminutes--;
-              clearInterval(interval);
+              clearInterval(this.interval);
             }
 
             if (whiteminutes !== 0) {
@@ -117,16 +118,16 @@ class Board {
               whitesecs = 0;
               this.gameOver = true;
               this.showGameOver();
-              clearInterval(interval);
+              clearInterval(this.interval);
             }
           } else {
             whitesecs--;
           }
         } else {
-          this.checkmate.play();
+          this.checkmateSound.play();
           this.gameOver = true;
           this.showGameOver();
-          clearInterval(interval);
+          clearInterval(this.interval);
         }
         whiteCounter.textContent = whiteminutes + ": " + whitesecs;
       } else {
@@ -136,7 +137,7 @@ class Board {
               blackmins--;
             } else {
               blackmins--;
-              clearInterval(interval);
+              clearInterval(this.interval);
             }
             if (blackmins !== 0 && this.checkmate === false) {
               blacksecs = 59;
@@ -144,7 +145,7 @@ class Board {
               blacksecs = 0;
               this.gameOver = true;
               this.showGameOver();
-              clearInterval(interval);
+              clearInterval(this.interval);
             }
           } else {
             blacksecs--;
@@ -153,7 +154,7 @@ class Board {
           this.checkmateSound.play();
           this.gameOver = true;
           this.showGameOver();
-          clearInterval(interval);
+          clearInterval(this.interval);
         }
         blackCounter.textContent = blackmins + ": " + blacksecs;
       }
@@ -329,7 +330,7 @@ class Board {
           object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
-            object.availableMovesforQueen(self.turn);
+            object.availableMovesforQueen(self.turn, false);
             const moves = object.getAllowedMoves();
             if (moves.length !== 0) {
               self.currentClickedPiece = clickedPiece;
@@ -345,7 +346,7 @@ class Board {
           object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
-            object.availableMovesforKing(self.turn);
+            object.availableMovesforKing(self.turn, false, false);
             const moves = object.getAllowedMoves();
             if (moves.length !== 0) {
               self.currentClickedPiece = clickedPiece;
@@ -362,7 +363,7 @@ class Board {
           object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
-            object.availableMovesforRook(self.turn);
+            object.availableMovesforRook(self.turn, false);
             const moves = object.getAllowedMoves();
             if (moves.length !== 0) {
               self.currentClickedPiece = clickedPiece;
@@ -378,7 +379,7 @@ class Board {
           object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
-            object.availableMovesforKnight(self.turn);
+            object.availableMovesforKnight(self.turn, false);
             const moves = object.getAllowedMoves();
             if (moves.length !== 0) {
               self.currentClickedPiece = clickedPiece;
@@ -394,7 +395,7 @@ class Board {
           object = self.findObject(clickedPiece.parentElement.id);
 
           if (object !== undefined) {
-            object.availableMovesforBishop(self.turn);
+            object.availableMovesforBishop(self.turn, false);
             const moves = object.getAllowedMoves();
             if (moves.length !== 0) {
               self.currentClickedPiece = clickedPiece;
@@ -667,5 +668,31 @@ class Board {
         self.MoveFunctions.undoAllowedMoves(element.getAllowedMoves());
       });
     }
+  }
+  reset() {
+    this.check = false;
+    this.checkmate = false;
+    this.gameOver = false;
+    this.currentClickedPiece = undefined;
+    clearInterval(this.interval);
+
+    $("#White_Clock")[0].firstChild.textContent = "5:00";
+    $("#Black_Clock")[0].firstChild.textContent = "5:00";
+    this.startClock();
+    $("#Turn")[0].textContent = "White's Turn";
+    this.whitePieces.forEach((element) => {
+      let img = document.getElementById(element.getCellNo()).firstChild;
+
+      img.parentElement.removeChild(img);
+    });
+    this.whitePieces.length = 0;
+    this.blackPieces.forEach((element) => {
+      let img = document.getElementById(element.getCellNo()).firstChild;
+
+      img.parentElement.removeChild(img);
+    });
+    this.blackPieces.length = 0;
+    this.drawPieces();
+    document.getElementById("over").style.display = "none";
   }
 }

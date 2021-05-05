@@ -1,5 +1,6 @@
 class Knight extends Piece {
   allowedMoves = [];
+  allyProtection;
   constructor(imgUrl, cellNo, name, id) {
     super(imgUrl, cellNo, name, id);
   }
@@ -18,7 +19,10 @@ class Knight extends Piece {
   getAllowedMoves() {
     return this.allowedMoves;
   }
-  availableMovesforKnight(turn) {
+  //ally Protection is used when we have to get the moves when
+  //the piece is defending its ally piece.
+  availableMovesforKnight(turn, allyProtection) {
+    this.allyProtection = allyProtection;
     let color = this.getColor();
 
     this.MoveFunctions = new moveFunctions();
@@ -82,6 +86,10 @@ class Knight extends Piece {
     } else if (object.getColor() !== color) {
       this.allowedMoves.push(row + i);
       return true;
+    } else if (object.getColor() === color) {
+      if (this.allyProtection) {
+        this.allowedMoves.push(row + i);
+      }
     }
   }
   allowedMovesforKnight(targetCell) {
