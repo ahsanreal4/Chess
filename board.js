@@ -298,6 +298,9 @@ class Board {
         }
       });
     });
+    document.body.addEventListener("dblclick", function (e) {
+      e.preventDefault();
+    });
     document.body.addEventListener("mousedown", function (e) {
       e.preventDefault();
     });
