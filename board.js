@@ -105,19 +105,20 @@ class Board {
       if (this.turn === "white") {
         if (this.checkmate === false) {
           if (whitesecs === 0) {
-            if (whiteminutes >= 2) {
+            if (whiteminutes >= 1) {
               whiteminutes--;
             } else {
               whiteminutes--;
               clearInterval(this.interval);
             }
 
-            if (whiteminutes !== 0) {
+            if (whiteminutes !== -1 && this.checkmate === false) {
               whitesecs = 59;
             } else {
               whitesecs = 0;
               this.gameOver = true;
               this.showGameOver();
+              whiteCounter.textContent = "0:00";
               clearInterval(this.interval);
             }
           } else {
@@ -133,13 +134,13 @@ class Board {
       } else {
         if (this.checkmate === false) {
           if (blacksecs === 0) {
-            if (blackmins >= 2) {
+            if (blackmins >= 1) {
               blackmins--;
             } else {
               blackmins--;
               clearInterval(this.interval);
             }
-            if (blackmins !== 0 && this.checkmate === false) {
+            if (blackmins !== -1 && this.checkmate === false) {
               blacksecs = 59;
             } else {
               blacksecs = 0;
