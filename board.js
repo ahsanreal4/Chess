@@ -30,7 +30,7 @@ class Board {
     this.checkmateSound = $("#myAudio3")[0];
     this.checkSound.volume = 0.1;
     this.checkmateSound.volume = 0.1;
-    this.beepSound.volume = 0.1;
+    this.beepSound.volume = 0.05;
     this.moveSound.volume = 0.4;
 
     self = this;
@@ -302,6 +302,49 @@ class Board {
     });
     document.body.addEventListener("mousemove", function (e) {
       e.preventDefault();
+    });
+    console.log(window.innerWidth);
+    self.responsive();
+    window.addEventListener("resize", function () {
+      self.responsive();
+    });
+  }
+  responsive() {
+    if (window.innerWidth < 435) {
+      self.elements.forEach((element) => {
+        element.style.height = "40px";
+        element.style.width = "40px";
+        self.changeImageSizes(30);
+        document.getElementById("container").style.width = "370px";
+      });
+    } else if (window.innerWidth < 520) {
+      self.elements.forEach((element) => {
+        element.style.height = "50px";
+        element.style.width = "50px";
+        self.changeImageSizes(40);
+        document.getElementById("container").style.width = "445px";
+      });
+    } else if (window.innerWidth > 520) {
+      self.elements.forEach((element) => {
+        element.style.height = "60px";
+        element.style.width = "60px";
+        self.changeImageSizes(50);
+        document.getElementById("container").style.width = "520px";
+      });
+    }
+  }
+  changeImageSizes(size) {
+    self.whitePieces.forEach((element) => {
+      let cellNo = document.getElementById(element.getCellNo()).id;
+      let img = document.getElementById(cellNo).firstChild;
+      img.setAttribute("width", size);
+      img.setAttribute("height", size);
+    });
+    self.blackPieces.forEach((element) => {
+      let cellNo = document.getElementById(element.getCellNo()).id;
+      let img = document.getElementById(cellNo).firstChild;
+      img.setAttribute("width", size);
+      img.setAttribute("height", size);
     });
   }
   PieceClicked(clickedPiece) {

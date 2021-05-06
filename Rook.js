@@ -2,8 +2,11 @@ class Rook extends Piece {
   allowedMoves = [];
   MoveFunctions;
   allyProtection;
+  rookMoved;
+
   constructor(imgUrl, cellNo, name, id) {
     super(imgUrl, cellNo, name, id);
+    this.rookMoved = false;
   }
   getCellNo() {
     return super.getCellNo();
@@ -16,6 +19,9 @@ class Rook extends Piece {
   }
   getName() {
     return super.getName();
+  }
+  getRookMoved() {
+    return this.rookMoved;
   }
   getAllowedMoves() {
     return this.allowedMoves;
@@ -86,8 +92,11 @@ class Rook extends Piece {
     }
   }
   allowedMovesforRook(targetCell) {
-    if (this.MoveFunctions.allowedMoves(targetCell, this.allowedMoves))
+    if (this.MoveFunctions.allowedMoves(targetCell, this.allowedMoves)) {
+      this.rookMoved = true;
       return true;
+    }
+
     return false;
   }
 }
