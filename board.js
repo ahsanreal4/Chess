@@ -303,7 +303,7 @@ class Board {
     document.body.addEventListener("mousemove", function (e) {
       e.preventDefault();
     });
-    console.log(window.innerWidth);
+
     self.responsive();
     window.addEventListener("resize", function () {
       self.responsive();
@@ -316,6 +316,10 @@ class Board {
         element.style.width = "40px";
         self.changeImageSizes(30);
         document.getElementById("container").style.width = "370px";
+        document.getElementById("container").style.marginTop = "120px";
+        document.getElementById("over").style.width = "300px";
+        document.getElementById("over").style.height = "150px";
+        document.getElementById("over").style.fontSize = "35px";
       });
     } else if (window.innerWidth < 520) {
       self.elements.forEach((element) => {
@@ -323,6 +327,10 @@ class Board {
         element.style.width = "50px";
         self.changeImageSizes(40);
         document.getElementById("container").style.width = "445px";
+        document.getElementById("over").style.width = "350px";
+        document.getElementById("over").style.height = "210px";
+        document.getElementById("container").style.marginTop = "3em";
+        document.getElementById("over").style.fontSize = "45px";
       });
     } else if (window.innerWidth > 520) {
       self.elements.forEach((element) => {
@@ -330,6 +338,10 @@ class Board {
         element.style.width = "60px";
         self.changeImageSizes(50);
         document.getElementById("container").style.width = "520px";
+        document.getElementById("over").style.width = "400px";
+        document.getElementById("over").style.height = "250px";
+        document.getElementById("container").style.marginTop = "3em";
+        document.getElementById("over").style.fontSize = "55px";
       });
     }
   }
