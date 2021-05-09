@@ -314,7 +314,18 @@ class Board {
     });
   }
   responsive() {
-    if (window.innerWidth < 435) {
+    if (window.innerWidth < 350) {
+      self.elements.forEach((element) => {
+        element.style.height = "30px";
+        element.style.width = "30px";
+        self.changeImageSizes(25);
+        document.getElementById("container").style.width = "290px";
+        document.getElementById("container").style.marginTop = "120px";
+        document.getElementById("over").style.width = "300px";
+        document.getElementById("over").style.height = "150px";
+        document.getElementById("over").style.fontSize = "35px";
+      });
+    } else if (window.innerWidth < 435) {
       self.elements.forEach((element) => {
         element.style.height = "40px";
         element.style.width = "40px";
