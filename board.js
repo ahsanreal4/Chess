@@ -318,7 +318,7 @@ class Board {
       self.elements.forEach((element) => {
         element.style.height = "40px";
         element.style.width = "40px";
-        self.changeImageSizes(30);
+        self.changeImageSizes(35);
         document.getElementById("container").style.width = "370px";
         document.getElementById("container").style.marginTop = "120px";
         document.getElementById("over").style.width = "300px";
@@ -329,18 +329,29 @@ class Board {
       self.elements.forEach((element) => {
         element.style.height = "50px";
         element.style.width = "50px";
-        self.changeImageSizes(40);
+        self.changeImageSizes(45);
         document.getElementById("container").style.width = "445px";
         document.getElementById("over").style.width = "350px";
         document.getElementById("over").style.height = "210px";
         document.getElementById("container").style.marginTop = "3em";
         document.getElementById("over").style.fontSize = "45px";
       });
-    } else if (window.innerWidth > 520) {
+    } else if (window.innerWidth < 630) {
       self.elements.forEach((element) => {
         element.style.height = "60px";
         element.style.width = "60px";
-        self.changeImageSizes(50);
+        self.changeImageSizes(55);
+        document.getElementById("container").style.width = "445px";
+        document.getElementById("over").style.width = "350px";
+        document.getElementById("over").style.height = "210px";
+        document.getElementById("container").style.marginTop = "3em";
+        document.getElementById("over").style.fontSize = "45px";
+      });
+    } else if (window.innerWidth > 630) {
+      self.elements.forEach((element) => {
+        element.style.height = "75px";
+        element.style.width = "75px";
+        self.changeImageSizes(65);
         document.getElementById("container").style.width = "520px";
         document.getElementById("over").style.width = "400px";
         document.getElementById("over").style.height = "250px";
