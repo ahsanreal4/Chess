@@ -314,62 +314,74 @@ class Board {
     });
   }
   responsive() {
+    let containerWidth = null;
+    let containerMarginTop = null;
+    let overWidth = null;
+    let overHeight = null;
+    let overFontSize = null;
     if (window.innerWidth < 350) {
+      containerWidth = 290;
+      containerMarginTop = 120;
+      overWidth = 300;
+      overHeight = 150;
+      overFontSize = 35;
       self.elements.forEach((element) => {
         element.style.height = "30px";
         element.style.width = "30px";
         self.changeImageSizes(25);
-        document.getElementById("container").style.width = "290px";
-        document.getElementById("container").style.marginTop = "120px";
-        document.getElementById("over").style.width = "300px";
-        document.getElementById("over").style.height = "150px";
-        document.getElementById("over").style.fontSize = "35px";
       });
     } else if (window.innerWidth < 435) {
+      containerWidth = 370;
+      containerMarginTop = 120;
+      overWidth = 300;
+      overHeight = 150;
+      overFontSize = 35;
       self.elements.forEach((element) => {
         element.style.height = "40px";
         element.style.width = "40px";
         self.changeImageSizes(35);
-        document.getElementById("container").style.width = "370px";
-        document.getElementById("container").style.marginTop = "120px";
-        document.getElementById("over").style.width = "300px";
-        document.getElementById("over").style.height = "150px";
-        document.getElementById("over").style.fontSize = "35px";
       });
     } else if (window.innerWidth < 520) {
+      containerWidth = 445;
+      containerMarginTop = 100;
+      overWidth = 350;
+      overHeight = 210;
+      overFontSize = 45;
       self.elements.forEach((element) => {
         element.style.height = "50px";
         element.style.width = "50px";
         self.changeImageSizes(45);
-        document.getElementById("container").style.width = "445px";
-        document.getElementById("over").style.width = "350px";
-        document.getElementById("over").style.height = "210px";
-        document.getElementById("container").style.marginTop = "3em";
-        document.getElementById("over").style.fontSize = "45px";
       });
-    } else if (window.innerWidth < 630) {
+    } else if (window.innerWidth < 640) {
+      containerWidth = 445;
+      containerMarginTop = 100;
+      overWidth = 350;
+      overHeight = 210;
+      overFontSize = 45;
       self.elements.forEach((element) => {
         element.style.height = "60px";
         element.style.width = "60px";
         self.changeImageSizes(55);
-        document.getElementById("container").style.width = "445px";
-        document.getElementById("over").style.width = "350px";
-        document.getElementById("over").style.height = "210px";
-        document.getElementById("container").style.marginTop = "3em";
-        document.getElementById("over").style.fontSize = "45px";
       });
-    } else if (window.innerWidth > 630) {
+    } else if (window.innerWidth > 640) {
+      containerWidth = 645;
+      containerMarginTop = 30;
+      overWidth = 400;
+      overHeight = 250;
+      overFontSize = 55;
       self.elements.forEach((element) => {
         element.style.height = "75px";
         element.style.width = "75px";
         self.changeImageSizes(65);
-        document.getElementById("container").style.width = "645px";
-        document.getElementById("over").style.width = "400px";
-        document.getElementById("over").style.height = "250px";
-        document.getElementById("container").style.marginTop = "1.5em";
-        document.getElementById("over").style.fontSize = "55px";
       });
     }
+    document.getElementById("container").style.width = `${containerWidth}px`;
+    document.getElementById(
+      "container"
+    ).style.marginTop = `${containerMarginTop}px`;
+    document.getElementById("over").style.width = `${overWidth}px`;
+    document.getElementById("over").style.height = `${overHeight}px`;
+    document.getElementById("over").style.fontSize = `${overFontSize}px`;
   }
   changeImageSizes(size) {
     self.whitePieces.forEach((element) => {
