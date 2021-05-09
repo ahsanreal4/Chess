@@ -363,10 +363,10 @@ class Board {
         element.style.height = "75px";
         element.style.width = "75px";
         self.changeImageSizes(65);
-        document.getElementById("container").style.width = "520px";
+        document.getElementById("container").style.width = "645px";
         document.getElementById("over").style.width = "400px";
         document.getElementById("over").style.height = "250px";
-        document.getElementById("container").style.marginTop = "3em";
+        document.getElementById("container").style.marginTop = "1.5em";
         document.getElementById("over").style.fontSize = "55px";
       });
     }
