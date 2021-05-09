@@ -191,28 +191,28 @@ class King extends Piece {
           }
         }
       }
-    }
-    if (dontCheckattackedCells === false) {
-      for (let i = 0; i < this.allowedMoves.length; i++) {
-        let element = this.allowedMoves[i];
-        for (let a = 0; a < this.attackedCells.length; a++) {
-          let element2 = this.attackedCells[a];
+      if (dontCheckattackedCells === false) {
+        for (let i = 0; i < this.allowedMoves.length; i++) {
+          let element = this.allowedMoves[i];
+          for (let a = 0; a < this.attackedCells.length; a++) {
+            let element2 = this.attackedCells[a];
 
-          if (element === element2) {
-            if (i === this.allowedMoves.length - 1) {
-              this.allowedMoves.pop();
-              break;
-            } else {
-              let temp = this.allowedMoves[this.allowedMoves.length - 1];
-              this.allowedMoves[
-                this.allowedMoves.length - 1
-              ] = this.allowedMoves[i];
-              this.allowedMoves[i] = temp;
-              this.allowedMoves.pop();
+            if (element === element2) {
+              if (i === this.allowedMoves.length - 1) {
+                this.allowedMoves.pop();
+                break;
+              } else {
+                let temp = this.allowedMoves[this.allowedMoves.length - 1];
+                this.allowedMoves[
+                  this.allowedMoves.length - 1
+                ] = this.allowedMoves[i];
+                this.allowedMoves[i] = temp;
+                this.allowedMoves.pop();
 
-              i--;
+                i--;
 
-              break;
+                break;
+              }
             }
           }
         }

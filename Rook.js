@@ -86,8 +86,13 @@ class Rook extends Piece {
         }
         return true;
       } else if (object.getColor() !== color) {
-        this.allowedMoves.push(row + i);
-        return true;
+        if (object.getName() === "king") {
+          this.allowedMoves.push(row + i);
+          return false;
+        } else {
+          this.allowedMoves.push(row + i);
+          return true;
+        }
       }
     }
   }
